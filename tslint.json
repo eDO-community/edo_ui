@@ -1,0 +1,18 @@
+{
+  "rules": {
+    "no-duplicate-variable": true,
+    "align": [
+      true
+    ],
+    "no-trailing-whitespace": true,
+    "indent": [
+      true
+    ],
+    "no-unused-variable": [
+      false
+    ]
+  },
+  "rulesDirectory": [
+    "node_modules/tslint-eslint-rules/dist/rules"
+  ]
+}

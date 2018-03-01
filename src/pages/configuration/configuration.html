@@ -1,0 +1,50 @@
+<button class="fixed-disconnect-button" ion-button icon-left clear (click)="disconnect()">
+  <ion-icon name="arrow-back"></ion-icon>
+  <span translate>disconnect</span>
+</button>
+
+<ion-content>
+  <ion-grid [hidden]="!initializing">
+    <ion-row justify-content-center align-items-center>
+      <ion-col col-auto>
+        <ion-spinner></ion-spinner>
+      </ion-col>
+      <ion-col col-auto>
+        <span translate>login-initializing</span>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ion-grid [hidden]="initializing">
+    <ion-row align-items-center justify-content-center>
+      <ion-col align-self-center text-center>
+        <img src="assets/img/edo-4-axes.png" />
+        <button class="configuration-large-btn" ion-button (click)="initialize(4)">Configura E.Do a 4 assi</button>
+      </ion-col>
+      <ion-col class="configuration-separator">
+        <div class="configuration-separator-line"></div>
+      </ion-col>
+      <ion-col align-self-center text-center>
+        <img src="assets/img/edo-6-axes.png" />
+        <button class="configuration-large-btn" ion-button (click)="initialize(6)">Configura E.Do a 6 assi</button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+<!-- <ion-grid>
+    <ion-row align-items-center justify-content-center>
+      <ion-col align-self-center text-center>
+        <img src="assets/img/edo-no-gripper.png" />
+        <button class="configuration-large-btn" ion-button>Configura E.Do con pinza</button>
+      </ion-col>
+      <ion-col class="configuration-separator">
+        <div class="configuration-separator-line"></div>
+      </ion-col>
+      <ion-col align-self-center text-center>
+        <img src="assets/img/edo-no-gripper.png" />
+        <button class="configuration-large-btn" ion-button (click)="showConfirm()">Configura E.Do senza pinza</button>
+      </ion-col>
+    </ion-row>
+  </ion-grid> -->
+
+</ion-content>

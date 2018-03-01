@@ -1,0 +1,39 @@
+<ion-header>
+  <ion-navbar color="primary">
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>
+      <span translate>settings-lan-title</span>
+    </ion-title>
+    <ion-buttons end edo-ros-status>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <div class="ion-card-wrapper">
+    <ion-card>
+      <ion-card-header>
+        <ion-item>
+          <span translate>settings-lan-title</span>
+        </ion-item>
+      </ion-card-header>
+
+      <ion-list>
+        <ion-item *ngIf="!loaded">
+          <ion-spinner item-start></ion-spinner>
+          <h2 translate>settings-loading</h2>
+        </ion-item>
+        <ion-item *ngIf="loaded" (click)="editLanIp()">
+          <h2 translate>settings-edo-lan-ip</h2>
+          <h3>{{lanIP}}</h3>
+        </ion-item>
+        <ion-item *ngIf="loaded" (click)="editLanNetmask()">
+          <h2 translate>settings-edo-lan-netmask</h2>
+          <h3>{{lanNetmask}}</h3>
+        </ion-item>
+      </ion-list>
+    </ion-card>
+  </div>
+</ion-content>

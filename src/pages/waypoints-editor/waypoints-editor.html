@@ -1,0 +1,80 @@
+<!--
+  Generated template for the WaypointsEditorPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar color="primary">
+      <ion-title><span translate>waypoints-editor-title</span></ion-title>
+
+      <ion-buttons end>
+        <button ion-button icon-only (click)="close()">
+          <ion-icon name="close"></ion-icon>
+        </button>
+      </ion-buttons>
+
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding-top padding-bottom>
+  <div class="waypoint-goto" padding-left padding-right *ngIf="!enableJoypad">
+    <button ion-button hold (holdingStart)="onGotoWaypoint($event);" (holdingCancel)="onReset($event);">
+      <span translate>waypoints-editor-goto-saved-waypoint</span>
+    </button>
+  </div>
+
+  <div class="waypoints-info-container" [hidden]="!enableJoypad">
+    <div class="waypoints-info">
+
+      <ion-row>
+        <ion-col>
+          <ion-item [hidden]="!enableJoypad">
+            <ion-label><span translate>waypoints-editor-field-name</span></ion-label>
+            <ion-input placeholder="Move #" [(ngModel)]="moveName"></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col col-3 text-right>
+          <button class="button-save button-green" ion-button (click)="addWaypointClicked($event)" [hidden]="!enableJoypad">
+            <span translate>waypoints-detail-add</span>
+          </button>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col>
+          <ion-item [hidden]="!enableJoypad" class="margin-top">
+            <ion-label><span translate>waypoints-editor-field-type</span></ion-label>
+            <ion-select [(ngModel)]="moveType" interface="popover">
+              <ion-option value="joint"><span translate>waypoints-editor-field-type-joint</span></ion-option>
+              <ion-option value="cartesian"><span translate>waypoints-editor-field-type-cartesian</span></ion-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+        <ion-col col-3>
+          <ion-select [(ngModel)]="moveTimeoutStr" class="margin-top" interface="popover">
+            <ion-option value="-1"><span translate>waypoints-editor-field-timeout-fly</span></ion-option>
+            <ion-option value="0">0 s</ion-option>
+            <ion-option value="1">1 s</ion-option>
+            <ion-option value="2">2 s</ion-option>
+            <ion-option value="5">5 s</ion-option>
+            <ion-option value="10">10 s</ion-option>
+          </ion-select>
+        </ion-col>
+        <ion-col>
+          <edo-range-wrapper [speed]="moveSpeed">
+            <ion-range min="0" max="100" step="5" snaps="true" [(ngModel)]="moveSpeed">
+            </ion-range>
+          </edo-range-wrapper>
+        </ion-col>
+      </ion-row>
+
+    </div>
+  </div>
+
+  <ros-jog-movement [hidden]="!enableJoypad"></ros-jog-movement>
+
+</ion-content>

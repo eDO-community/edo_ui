@@ -1,0 +1,13 @@
+<button ion-button clear color="light" icon-left>
+  <ion-icon name="list"></ion-icon> {{ros.pendingQueueLength}}
+</button>
+<button ion-button clear color="light" icon-left>
+  <ion-icon name="checkmark"></ion-icon> {{ros.waitingReceiveQueueLength}}
+</button>
+<button ion-button clear color="light" icon-left>
+  <ion-icon name="done-all"></ion-icon> {{ros.waitingExecutedQueueLength}}
+</button>
+
+<button ion-button clear [color]="rosStatus | async">
+  <ion-icon name="wifi"></ion-icon>
+</button>

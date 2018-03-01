@@ -1,0 +1,123 @@
+/**
+ * @license
+ * Copyright (c) 2017, COMAU S.p.A.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * The views and conclusions contained in the software and documentation are those
+ * of the authors and should not be interpreted as representing official policies,
+ * either expressed or implied, of the FreeBSD Project.
+ */
+
+ edo-range-wrapper {
+  width: 100%;
+  border-radius: 5px;
+  margin: 5px;
+  border: 1px solid color($colors, primary);
+  display: block;
+
+  .speed-range ion-range.range-disabled .range-tick {
+    opacity: 0.2;
+  }
+
+  .speed-range ion-range.range-disabled .range-knob-max {
+    display: none;
+  }
+
+  span {
+    display: block;
+    height: 100%;
+    color: color($colors, primary);
+
+      &.speed-right {
+        text-align: right;
+        font-size: 14px;
+        padding-top: 14px;
+        text-transform: uppercase;
+        font-weight: 500;
+      }
+      &.speed-left {
+        font-size: 16px;
+        padding-top: 12px;
+        font-weight: bold;
+      }
+  }
+
+  .speed-range {
+    + .col {
+      padding: 5px 0;
+    }
+
+    .item{
+      background: transparent;
+      padding: 0;
+    }
+
+    .item-inner {
+      border: none;
+      padding: 0;
+    }
+
+    .item-md.item-block .item-inner {
+      border: none;
+    }
+
+    ion-label {
+      margin: 0;
+      background: transparent;
+      padding: 0 2px;
+    }
+
+    ion-range {
+      padding: 0 8px;
+
+      .range-knob,
+      .range-knob-min.range-knob-min .range-knob {
+        background: transparent !important;
+        border: none !important;
+        outline: none !important;
+      }
+
+      .range-bar-active,
+      .range-bar {
+        display: none;
+      }
+
+      .range-tick {
+        background: #cbced2;
+        border-radius: 0;
+        transform: translateY(-50%);
+        top: 22px;
+      }
+
+      .range-tick-active {
+        background: color($colors, primary);
+      }
+
+      @for $i from 1 through 21 {
+        .range-tick:nth-child(#{$i}) {
+            height: 6px + $i;
+        }
+      }
+    }
+  }
+}

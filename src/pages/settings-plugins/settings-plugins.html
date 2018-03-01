@@ -1,0 +1,37 @@
+<ion-header>
+    <ion-navbar color="primary">
+      <button ion-button menuToggle>
+        <ion-icon name="menu"></ion-icon>
+      </button>
+      <ion-title>
+        <span translate>settings-plugins-title</span>
+      </ion-title>
+      <ion-buttons end edo-ros-status>
+      </ion-buttons>
+    </ion-navbar>
+  </ion-header>
+
+  <ion-content>
+    <div class="ion-card-wrapper">
+      <ion-card>
+        <ion-card-header>
+          <ion-item>
+            <span translate>settings-plugins-title</span>
+          </ion-item>
+        </ion-card-header>
+
+        <ion-list *ngIf="!loaded">
+          <ion-item>
+            <ion-spinner item-start></ion-spinner>
+            <h2 translate>settings-loading</h2>
+          </ion-item>
+        </ion-list>
+        <ion-list *ngIf="loaded">
+          <ion-item *ngFor="let plugin of plugins">
+              <ion-label>{{plugin.name}}</ion-label>
+              <ion-toggle [checked]="plugin.enabled" (ionChange)="toggleEnabled(plugin)"></ion-toggle>
+          </ion-item>
+        </ion-list>
+      </ion-card>
+    </div>
+  </ion-content>

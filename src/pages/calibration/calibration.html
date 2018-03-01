@@ -1,0 +1,146 @@
+<ion-header>
+  <ion-navbar color="primary" *ngIf="!firstTime">
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title><span translate>calibration-title</span></ion-title>
+    <ion-buttons end edo-ros-status>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <div class="calibration-image">
+    <div class="calibration-image-container">
+      <ion-row>
+        <ion-col>
+          <div class="calibration-image-column">
+            <h1 class="hide-on-short-screen" translate>calibration-image-text</h1>
+            <h1 class="hide-on-tall-screen" translate>calibration-image-text-short</h1>
+          </div>
+        </ion-col>
+        <ion-col col-7 class="hide-on-short-screen">
+          <div class="calibration-image-column">
+              <img class="no-waypoints-big-image" src="assets/img/calibration.svg" />
+          </div>
+        </ion-col>
+      </ion-row>
+    </div>
+  </div>
+</ion-content>
+
+<ion-footer no-shadow>
+  <ion-grid>
+    <ion-row align-item-center text-center *ngIf="currentJoint == -2">
+      <ion-col align-self-center class="joint-buttons">
+        <div class="calibration-method">
+          <div>
+            <p translate>calibration-calibrate-from-actual-position</p>
+            <button ion-button (click)="onCalibrateStart()">
+              <span translate>calibration-calibrate-start</span>
+            </button>
+          </div>
+        </div>
+      </ion-col>
+      <ion-col>
+        <div class="calibration-method">
+          <div>
+            <p translate>calibration-calibrate-from-calibrate-position</p>
+            <ion-row>
+              <ion-col>
+                <button ion-button block color="primary" hold (holdingStart)="onReset($event)" (holdingCancel)="onStop($event)"><span translate>calibration-calibrate-reset</span></button>
+              </ion-col>
+            </ion-row>
+          </div>
+        </div>
+      </ion-col>
+      <ion-col *ngIf="firstTime">
+        <div class="calibration-method">
+          <div>
+            <p translate>calibration-disconnect-title</p>
+            <ion-row>
+              <ion-col>
+                <button ion-button block color="primary" (click)="disconnect()"><span translate>calibration-disconnect</span></button>
+              </ion-col>
+            </ion-row>
+          </div>
+        </div>
+      </ion-col>
+    </ion-row>
+    <ion-row align-item-center text-center *ngIf="currentJoint == -1">
+      <ion-col col-auto align-self-center class="joint-buttons">
+        <button class="button-move-joint" ion-button icon-only disabled>
+          <ion-icon name="remove"></ion-icon>
+        </button>
+      </ion-col>
+      <ion-col align-self-center class="joint-buttons">
+        <ion-row class="calibration-steps">
+          <ion-col>
+            <h2 translate>calibration-select-joint-to-be-calibrated</h2>
+          </ion-col>
+        </ion-row>
+        <ion-row class="calibration-steps">
+          <ion-col col-auto>
+            <button ion-button icon-right color="secondary" disabled *ngIf="jointsCalibrated[0]">J1<ion-icon name="checkmark-circle"></ion-icon></button>
+            <button ion-button icon-right outline (click)="onCalibrateStart(0)" *ngIf="!jointsCalibrated[0]">J1<ion-icon name="radio-button-off"></ion-icon></button>
+            <button ion-button icon-right color="secondary" disabled *ngIf="jointsCalibrated[1]">J2<ion-icon name="checkmark-circle"></ion-icon></button>
+            <button ion-button icon-right outline (click)="onCalibrateStart(1)" *ngIf="!jointsCalibrated[1]">J2<ion-icon name="radio-button-off"></ion-icon></button>
+            <button ion-button icon-right color="secondary" disabled *ngIf="jointsCalibrated[2]">J3<ion-icon name="checkmark-circle"></ion-icon></button>
+            <button ion-button icon-right outline (click)="onCalibrateStart(2)" *ngIf="!jointsCalibrated[2]">J3<ion-icon name="radio-button-off"></ion-icon></button>
+            <button ion-button icon-right color="secondary" disabled *ngIf="jointsCalibrated[3]">J4<ion-icon name="checkmark-circle"></ion-icon></button>
+            <button ion-button icon-right outline (click)="onCalibrateStart(3)" *ngIf="!jointsCalibrated[3]">J4<ion-icon name="radio-button-off"></ion-icon></button>
+            <button ion-button icon-right color="secondary" disabled *ngIf="jointsCalibrated[4]">J5<ion-icon name="checkmark-circle"></ion-icon></button>
+            <button ion-button icon-right outline (click)="onCalibrateStart(4)" *ngIf="!jointsCalibrated[4]">J5<ion-icon name="radio-button-off"></ion-icon></button>
+            <button ion-button icon-right color="secondary" disabled *ngIf="jointsCalibrated[5]">J6<ion-icon name="checkmark-circle"></ion-icon></button>
+            <button ion-button icon-right outline (click)="onCalibrateStart(5)" *ngIf="!jointsCalibrated[5]">J6<ion-icon name="radio-button-off"></ion-icon></button>
+          </ion-col>
+        </ion-row>
+      </ion-col>
+      <ion-col col-auto align-self-center class="joint-buttons">
+        <button class="button-move-joint" ion-button icon-only disabled>
+          <ion-icon name="add"></ion-icon>
+        </button>
+      </ion-col>
+    </ion-row>
+    <ion-row align-item-center text-center *ngIf="currentJoint >= 0">
+        <ion-col col-auto align-self-center class="joint-buttons">
+          <button class="button-move-joint" ion-button icon-only #neg="holdRef" [disabled]="pos.holdingCount > 0" hold (holding)="onJointsValueChange(currentJoint, -1)" (holdingCancel)="onJointsValueChange(currentJoint, 0)">
+            <ion-icon name="remove"></ion-icon>
+          </button>
+        </ion-col>
+        <ion-col align-self-center class="joint-buttons">
+          <ion-row class="calibration-steps">
+            <ion-col>
+              <h2><span translate>calibration-current-axis</span> J{{currentJoint + 1}} {{ros.joints[currentJoint] | edonumber }}</h2>
+            </ion-col>
+          </ion-row>
+          <ion-row class="calibration-steps">
+            <ion-col>
+              <edo-range-wrapper [speed]="speed">
+                <ion-range min="0" max="100" step="5" snaps="true" [(ngModel)]="speed" [disabled]="sorting || currentElement >= 0">
+                </ion-range>
+              </edo-range-wrapper>
+            </ion-col>
+          </ion-row>
+          <ion-row class="calibration-joint-buttons">
+            <ion-col col-4>
+              <button ion-button [disabled]="pos.holdingCount > 0 || neg.holdingCount > 0" (click)="onCalibrateStart(-1)">
+                <span translate>calibration-calibrate-cancel</span>
+              </button>
+            </ion-col>
+            <ion-col col-8>
+              <button ion-button icon-right color="secondary" [disabled]="pos.holdingCount > 0 || neg.holdingCount > 0" (click)="onCalibrate()">
+                <span translate>calibration-calibrate-current-axis</span>
+                <ion-icon name="checkmark"></ion-icon>
+              </button>
+            </ion-col>
+          </ion-row>
+        </ion-col>
+        <ion-col col-auto align-self-center class="joint-buttons">
+          <button class="button-move-joint" id="jogadd" ion-button icon-only #pos="holdRef" [disabled]="neg.holdingCount > 0" hold (holding)="onJointsValueChange(currentJoint, 1)" (holdingCancel)="onJointsValueChange(currentJoint, 0)">
+            <ion-icon name="add"></ion-icon>
+          </button>
+        </ion-col>
+      </ion-row>
+  </ion-grid>
+</ion-footer>

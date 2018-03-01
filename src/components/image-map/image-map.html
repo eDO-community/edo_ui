@@ -1,0 +1,5 @@
+<img [src]="src" [attr.usemap]="'#' + mapId" #imgElement>
+<map [name]="mapId" [id]="mapId">
+  <area *ngFor="let coordinates of scaledCoords; index as i" [href]="i" (click)="onMapClick($event, i)" [coords]="coordinates" shape="poly" />
+</map>
+<ng-content></ng-content>

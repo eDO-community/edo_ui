@@ -1,0 +1,88 @@
+{
+    "name": "edo-ui",
+    "version": "0.0.7",
+    "author": "Comau",
+    "license": "BSD",
+    "homepage": "https://edo.cloud/",
+    "private": true,
+    "scripts": {
+        "clean": "ionic-app-scripts clean",
+        "build": "ionic-app-scripts build",
+        "lint": "tslint --type-check --project tsconfig.json -t verbose src/**/*.ts",
+        "ionic:build": "ionic-app-scripts build",
+        "ionic:serve": "ionic-app-scripts serve -b",
+        "ionic:android": "ionic cordova run android",
+        "extract": "ngx-translate-extract --input ./src -m _ -o ./src/assets/i18n/en.json -o ./src/assets/i18n/it.json --clean --sort --format namespaced-json",
+        "generate-sdk": "dts-bundle-generator -o ../edo-ui-sdk/index.d.ts --umd-module-name edosdk src/app/edo.sdk.ts",
+        "docs": "typedoc --out ./docs src/**/*.ts"
+    },
+    "config": {
+        "ionic_source_map": "source-map",
+        "ionic_webpack": "./config/webpack.config.js"
+    },
+    "dependencies": {
+        "@angular/common": "4.1.3",
+        "@angular/compiler": "4.1.3",
+        "@angular/compiler-cli": "4.1.3",
+        "@angular/core": "4.1.3",
+        "@angular/forms": "4.1.3",
+        "@angular/http": "4.1.3",
+        "@angular/platform-browser": "4.1.3",
+        "@angular/platform-browser-dynamic": "4.1.3",
+        "@ionic-native/core": "3.12.1",
+        "@ionic-native/globalization": "^4.1.0",
+        "@ionic-native/splash-screen": "3.12.1",
+        "@ionic-native/sqlite": "^4.1.0",
+        "@ionic-native/status-bar": "3.12.1",
+        "@ionic/storage": "2.0.1",
+        "@ngx-translate/core": "^7.1.0",
+        "@ngx-translate/http-loader": "^0.1.0",
+        "@types/roslib": "^0.18.0",
+        "cordova-android": "^6.2.3",
+        "cordova-browser": "^4.1.0",
+        "cordova-plugin-console": "^1.0.7",
+        "cordova-plugin-device": "^1.1.6",
+        "cordova-plugin-globalization": "^1.0.7",
+        "cordova-plugin-splashscreen": "^4.0.3",
+        "cordova-plugin-statusbar": "^2.2.3",
+        "cordova-plugin-whitelist": "^1.3.2",
+        "cordova-sqlite-storage": "^2.0.4",
+        "cordova-windows": "^5.0.0",
+        "ionic-angular": "3.4.0",
+        "ionic-plugin-keyboard": "^2.2.1",
+        "ionicons": "3.0.0",
+        "roslib": "git://github.com/RobotWebTools/roslibjs.git#develop",
+        "rxjs": "5.4.0",
+        "sw-toolbox": "3.6.0",
+        "zone.js": "0.8.12",
+        "cordova-ios": "4.2.0"
+    },
+    "devDependencies": {
+        "@biesbjerg/ngx-translate-extract": "^2.3.2",
+        "@ionic/app-scripts": "2.0.2",
+        "dts-bundle-generator": "^0.6.0",
+        "ionic": "3.12.0",
+        "typedoc": "^0.8.0",
+        "typescript": "^2.5.3",
+        "typescript-closure-tools": "^0.0.4"
+    },
+    "description": "An Ionic project",
+    "cordova": {
+        "plugins": {
+            "cordova-plugin-console": {},
+            "cordova-plugin-device": {},
+            "cordova-plugin-splashscreen": {},
+            "cordova-plugin-statusbar": {},
+            "cordova-plugin-whitelist": {},
+            "ionic-plugin-keyboard": {},
+            "cordova-sqlite-storage": {},
+            "cordova-plugin-globalization": {}
+        },
+        "platforms": [
+            "android",
+            "browser",
+            "ios",
+            "windows"
+        ]
+    }
+}

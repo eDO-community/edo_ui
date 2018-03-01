@@ -1,0 +1,44 @@
+<ion-header>
+  <ion-navbar color="primary">
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>
+      <span translate>settings-title</span>
+    </ion-title>
+    <ion-buttons end edo-ros-status>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <div class="ion-card-wrapper">
+    <ion-card>
+      <ion-card-header>
+        <ion-item>
+          <span translate>settings-title</span>
+        </ion-item>
+      </ion-card-header>
+
+      <ion-list>
+        <ion-item (click)="gotoLan()">
+          <h2 translate>settings-section-lan</h2>
+        </ion-item>
+        <ion-item (click)="gotoWiFi()">
+          <h2 translate>settings-section-wifi</h2>
+        </ion-item>
+        <ion-item (click)="gotoPlugins()">
+          <h2 translate>settings-section-plugins</h2>
+        </ion-item>
+        <ion-item (click)="editControlSwitch()">
+          <h2 translate>settings-edo-control-switch</h2>
+        </ion-item>
+        <ion-item (click)="editLanguage()">
+          <h2 translate>settings-edo-language</h2>
+          <img src="{{languageStr.url}}" class="flag-img">
+          <h3 class="flag-txt">{{languageStr.name}}</h3>
+        </ion-item>
+      </ion-list>
+    </ion-card>
+  </div>
+</ion-content>

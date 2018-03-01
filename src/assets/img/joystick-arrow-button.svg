@@ -1,0 +1,18 @@
+<svg class="arrow-button" width="100%" height="100%" viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
+    <g transform="matrix(6.02811e-17,0.984466,-0.984466,6.02811e-17,98.6487,1.55341)">
+        <g transform="matrix(1.36573,0,0,1.64704,-36.573,-4.04097)">
+            <rect x="85.41" y="6.245" width="14.59" height="52.423" style="fill:rgb(235,235,235);"/>
+        </g>
+        <g transform="matrix(6.85703e-17,1.11984,0.628049,-3.84569e-17,-103.902,-152.632)">
+            <g transform="matrix(1.33438,0,0,2.37926,0,0)">
+                <path class="arrow-button-bg" d="M106.323,126.69L106.323,73.632C106.323,71.37 108.16,69.533 110.423,69.533L160.127,69.533C162.322,69.533 164.104,71.315 164.104,73.51L164.104,126.69L135.214,136.454L106.323,126.69Z" />
+            </g>
+            <g transform="matrix(1.33438,0,0,2.37926,0,-1.86082)">
+                <path d="M135.757,87.205L148.214,98.797L123.301,98.797L135.757,87.205Z" style="fill:rgb(56,145,253);"/>
+            </g>
+        </g>
+        <g transform="matrix(-2.74497e-16,-1.49429,1.49429,-2.74497e-16,-105.156,253.089)">
+            <path class="arrow-button-arrow" d="M135.757,87.205L148.214,98.797L123.301,98.797L135.757,87.205Z" />
+        </g>
+    </g>
+</svg>

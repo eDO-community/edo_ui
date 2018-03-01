@@ -1,0 +1,323 @@
+/**
+ * @license
+ * Copyright (c) 2017, COMAU S.p.A.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * The views and conclusions contained in the software and documentation are those
+ * of the authors and should not be interpreted as representing official policies,
+ * either expressed or implied, of the FreeBSD Project.
+ */
+
+$button-size: 40px;
+$button-border: 1px solid transparentize(color($colors, primary), 0.7);
+$button-background-color-activated: lighten(color($colors, primary), 40%);
+
+@mixin arrow($edge-length, $position: right, $background: transparent, $border: none) {
+  &:after {
+    content: '';
+    $border-width: get-border-width($border);
+
+    @if $position == top {
+      transform: rotate(45deg);
+      transform-origin: top right;
+      top: 0;
+      right: 0;
+      border-bottom: none !important;
+      border-right: none !important;
+    } @else if $position == right {
+      transform: rotate(-45deg);
+      transform-origin: top right;
+      top: 0;
+      right: 0;
+      border-top: none !important;
+      border-left: none !important;
+    } @else if $position == bottom {
+      transform: rotate(45deg);
+      transform-origin: bottom left;
+      bottom: 0;
+      left: 0;
+      border-top: none !important;
+      border-left: none !important;
+    } @else if $position == left {
+      transform: rotate(45deg);
+      transform-origin: top left;
+      top: 0;
+      left: 0;
+      border-top: none !important;
+      border-right: none !important;
+    }
+  }
+}
+
+joystick {
+  display: block;
+  padding: 15px 20px 20px;
+  background-color: color($colors, light-gray);
+
+  .arrow-button {
+    position: relative;
+    display: inline-block;
+
+    background: none;
+    padding: 0;
+    button{
+      background: none;
+      padding: 0;
+    }
+
+    width: 80px;
+    height: 80px;
+    @media only screen and (max-width: 1200px) {
+      width: 60px;
+      height: 60px;
+    }
+
+    .arrow-button-svg {
+      .arrow-button-svg-bg {
+          fill: color($colors, primary);
+
+          .activated & {
+            fill:#0046ad;
+          }
+      }
+      .arrow-button-svg-arrow {
+          fill: color($colors, light-gray);
+      }
+    }
+  }
+
+  .movements {
+    padding: 20px 2.2% 20px 0 !important;
+    box-shadow: 0px 0px 20px 0px rgba(215, 221, 228, 0.75);
+    border-radius: 8px;
+    background-color: white;
+    z-index: 0;
+  }
+
+  .movement-options {
+    padding: 0 20px !important;
+
+    .movement-tabs .button-md {
+      border: 1px solid color($colors, primary);
+    }
+    .gripper-label {
+      font-size: 18px;
+      color: color($colors, primary);
+    }
+    .gripper-value {
+      margin: 12px 0 9px;
+      color: #0046ad;
+    }
+  }
+
+  .cartesian-button-set {
+    height: 100%;
+
+    .axis-0-negative {
+      border-right-width: 0;
+      button {
+        @include arrow($button-size, right, color($colors, light), $button-border);
+      }
+    }
+    .axis-1-positive {
+      border-bottom-width: 0;
+      button {
+        @include arrow($button-size, bottom, color($colors, light), $button-border);
+      }
+    }
+    .axis-1-negative {
+      border-top-width: 0;
+      button {
+        @include arrow($button-size, top, color($colors, light), $button-border);
+      }
+    }
+    .axis-0-positive {
+      border-left-width: 0;
+      button {
+        @include arrow($button-size, left, color($colors, light), $button-border);
+      }
+    }
+
+    .axis-2 {
+      height: 100%;
+    }
+  }
+
+  .rotation-button-set {
+    height: 100%;
+
+    .rotation-axis {
+      width: 85%;
+      margin: 0 auto;
+    }
+  }
+
+  .gripper-buttons {
+    display: flex;
+    button {
+      flex: 1 0;
+      height: 100%;
+      margin: 0 0 0 5px;
+    }
+  }
+
+  .joint-value {
+    color: #0046ad;
+    font-size: 3.7vw;
+  }
+
+  .joint-button-set {
+    &.movements {
+      padding: 52px 40px !important;
+      @media only screen and (max-width: 1200px) {
+        padding: 37px 30px !important;
+      }
+    }
+    .joint-buttons {
+      button {
+        width: 80px;
+        height: 80px;
+        @media only screen and (max-width: 1200px) {
+          width: 65px;
+          height: 65px;
+        }
+      }
+    }
+  }
+
+  svg text {
+    cursor: default;
+    user-select: none;
+  }
+  svg text::selection {
+    background: none;
+  }
+
+  .rotation-axis-selector {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+  }
+
+  .bg-horizontal::before {
+    content: "";
+    width: 234px;
+    height: 60px;
+    background-color: color($colors, light-gray);
+    position: absolute;
+    z-index: -1;
+    top: 50%;
+    left: 3px;
+    margin-top: -(60px/2);
+
+    @media only screen and (max-width: 1200px) {
+      width: 174px;
+      height: 45px;
+      margin-top: -(45px/2);
+    }
+  }
+
+  .vertical-buttons {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+
+    &::before {
+      content: "";
+      width: 60px;
+      height: 234px;
+      background-color: color($colors, light-gray);
+      position: absolute;
+      z-index: 0;
+      top: 3px;
+      left: 50%;
+      margin-left: -(60px/2);
+
+      @media only screen and (max-width: 1200px) {
+        width: 45px;
+        height: 174px;
+        margin-left: -(45px/2);
+      }
+    }
+  }
+
+  .square-dimensions {
+    width: 240px;
+    height: 240px;
+    @media only screen and (max-width: 1200px) {
+      width: 180px;
+      height: 180px;
+    }
+  }
+
+  .input-values {
+    padding-left: 20px !important;
+    height: 290px;
+    @media only screen and (max-width: 1200px) {
+      height: 230px;
+      padding-top: 11px !important;
+    }
+
+    label {
+      display: block;
+      border-bottom: 1px solid #8995a7;
+      line-height: 28px;
+      font-size: 16px;
+      padding-bottom: 2px;
+      margin: 4px 5px;
+      @media only screen and (max-width: 1200px) {
+        line-height: 22px;
+        margin: 0 5px;
+      }
+      &.active {
+        border-bottom: 1px solid color($colors, primary);
+
+        span {
+          background-color: color($colors, primary);
+        }
+      }
+
+      span {
+        background-color: #8995a7;
+        color: white;
+        padding: 4px;
+        font-size: 13px;
+        border-radius: 3px;
+        margin-right: 4px;
+      }
+    }
+
+    .input-values-clear {
+      float: right;
+      font-size: 20px;
+    }
+
+    button {
+      width: 100%;
+    }
+  }
+}

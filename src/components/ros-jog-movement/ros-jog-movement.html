@@ -1,0 +1,82 @@
+<div class="ros-jog-movement-positions">
+  <ion-grid>
+    <ion-row>
+      <ion-col text-center no-padding>
+      <small>X</small>
+      </ion-col>
+      <ion-col text-center no-padding>
+        <small>Y</small>
+      </ion-col>
+      <ion-col text-center no-padding>
+        <small>Z</small>
+      </ion-col>
+      <ion-col text-center no-padding>
+        <small>A</small>
+      </ion-col>
+      <ion-col text-center no-padding>
+        <small>E</small>
+      </ion-col>
+      <ion-col text-center no-padding style="border-right:1px solid #ccc">
+        <small>R</small>
+      </ion-col>
+      <ion-col text-center no-padding>
+        <small>J1</small>
+      </ion-col>
+      <ion-col text-center no-padding>
+        <small>J2</small>
+      </ion-col>
+      <ion-col text-center no-padding>
+        <small>J3</small>
+      </ion-col>
+      <ion-col text-center no-padding>
+        <small>J4</small>
+      </ion-col>
+      <ion-col text-center no-padding>
+        <small>J5</small>
+      </ion-col>
+      <ion-col text-center no-padding>
+        <small>J6</small>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col text-center text-nowrap>
+        <b>{{ ros.cartesianPosition.x | edonumber }}</b> mm
+      </ion-col>
+      <ion-col text-center text-nowrap>
+        <b>{{ ros.cartesianPosition.y | edonumber }}</b> mm
+      </ion-col>
+      <ion-col text-center text-nowrap>
+        <b>{{ ros.cartesianPosition.z | edonumber }}</b> mm
+      </ion-col>
+      <ion-col text-center text-nowrap>
+        <b>{{ ros.cartesianPosition.a | edonumber }}</b>°
+      </ion-col>
+      <ion-col text-center text-nowrap>
+        <b>{{ ros.cartesianPosition.e | edonumber }}</b>°
+      </ion-col>
+      <ion-col text-center text-nowrap style="border-right:1px solid #ccc">
+        <b>{{ ros.cartesianPosition.r | edonumber }}</b>°
+      </ion-col>
+      <ion-col text-center text-nowrap>
+        <b>{{ ros.joints[0] | edonumber }}</b>°
+      </ion-col>
+      <ion-col text-center text-nowrap>
+        <b>{{ ros.joints[1] | edonumber }}</b>°
+      </ion-col>
+      <ion-col text-center text-nowrap>
+        <b>{{ ros.joints[2] | edonumber }}</b>°
+      </ion-col>
+      <ion-col text-center text-nowrap>
+        <b>{{ ros.joints[3] | edonumber }}</b>°
+      </ion-col>
+      <ion-col text-center text-nowrap>
+        <b>{{ ros.joints[4] | edonumber }}</b>°
+      </ion-col>
+      <ion-col text-center text-nowrap>
+        <b>{{ ros.joints[5] | edonumber }}</b>°
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</div>
+
+<joystick #joystick></joystick>

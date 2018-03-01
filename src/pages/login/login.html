@@ -1,0 +1,45 @@
+<ion-header>
+
+</ion-header>
+
+<ion-content padding [hidden]="!ready">
+  <ion-grid class="login-wrapper">
+    <ion-row justify-content-center align-items-center>
+      <ion-col col-12 col-sm-6 col-lg-4>
+        <p text-center margin-bottom>
+          <img width="118" height="50" src="assets/img/edo-logo.svg">
+        </p>
+        <p ion-text margin-bottom color="danger" [hidden]="!failed || connecting" translate>login-connection-failed</p>
+
+        <ion-grid [hidden]="!connecting">
+          <ion-row justify-content-center align-items-center>
+            <ion-col col-auto>
+              <ion-spinner></ion-spinner>
+            </ion-col>
+            <ion-col col-auto>
+              <span translate>login-connecting</span>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+
+        <button ion-button block (click)="connectToDefault()" [hidden]="connecting">
+          <span translate>login-connect-default</span>
+        </button>
+
+        <ion-item no-padding [hidden]="connecting">
+          <ion-label color="primary" floating><span translate>login-ip-address</span></ion-label>
+          <ion-input [(ngModel)]="ip" (keyup.enter)="connectToIP()"></ion-input>
+        </ion-item>
+
+        <button ion-button block margin-top (click)="connectToIP()" [hidden]="connecting">
+          <span translate>login-connect-to-ip</span>
+        </button>
+
+        <button ion-button outline icon-left class="login-change-language" (click)="editLanguage()" [hidden]="connecting">
+          <ion-icon name="globe"></ion-icon>
+          <span translate>login-change-language</span>
+        </button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

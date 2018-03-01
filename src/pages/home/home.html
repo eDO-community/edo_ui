@@ -1,0 +1,33 @@
+<ion-header>
+  <ion-navbar color="primary">
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title><span translate>home-title</span></ion-title>
+    <ion-buttons end edo-ros-status>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <div class="home-image">
+    <div class="home-image-container">
+      <ion-row>
+        <ion-col>
+          <div class="home-image-column">
+            <h1 translate>home-image-text</h1>
+          </div>
+        </ion-col>
+        <ion-col class="hide-on-short-screen">
+          <div class="home-image-column">
+              <img class="no-waypoints-big-image" src="assets/img/edo-two-joints.svg" />
+          </div>
+        </ion-col>
+      </ion-row>
+    </div>
+  </div>
+</ion-content>
+
+<ion-footer no-shadow>
+  <ros-jog-movement></ros-jog-movement>
+</ion-footer>

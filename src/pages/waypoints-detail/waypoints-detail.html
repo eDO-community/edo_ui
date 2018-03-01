@@ -1,0 +1,112 @@
+<ion-header>
+
+  <ion-navbar color="primary">
+      <ion-title><span translate>waypoints-detail-title</span></ion-title>
+      <ion-buttons end edo-ros-status>
+      </ion-buttons>
+  </ion-navbar>
+
+</ion-header>
+
+<ion-content>
+  <ion-fab bottom center big-margin-bottom>
+    <button [hidden]="sorting" ion-fab color="primary" (click)="itemCreate()" [disabled]="currentElement >= 0"><ion-icon name="add"></ion-icon></button>
+
+    <button ion-button color="primary" (click)="toggleSort()" [hidden]="!sorting">
+      <span translate>waypoints-detail-sort-done</span>
+    </button>
+  </ion-fab>
+
+  <div class="ion-card-wrapper">
+    <ion-card>
+
+      <div class="no-waypoints" *ngIf="path.waypoints == 0">
+        <img class="no-waypoints-big-image" src="assets/img/edo_nojoint.png" />
+        <p><span translate>waypoints-detail-create-first-waypoint</span></p>
+        <img class="no-waypoints-small-image" src="assets/img/arrow-down.svg" />
+      </div>
+
+      <ion-list [reorder]="sorting" (ionItemReorder)="itemReorder($event)">
+        <ion-item-sliding #slidingItems *ngFor="let waypoint of path.waypoints; index as i" (ionDrag)="canSlide($event, slidingItems)">
+          <ion-item (click)="itemSelected(i, waypoint)" detail-push>
+            <button no-margin ion-button item-start clear large color="primary" (click)="waypointClicked(i, waypoint); $event.stopPropagation();" [hidden]="currentElement >= 0" [disabled]="sorting">
+              <ion-icon name="log-in"></ion-icon>
+            </button>
+            <ion-icon class="icon-space" item-start *ngIf="i < currentElement" color="secondary" name="checkmark-circle-outline"></ion-icon>
+            <ion-spinner class="icon-space" item-start *ngIf="i == currentElement" color="primary" name="crescent"></ion-spinner>
+            <ion-icon class="icon-space" item-start *ngIf="i > currentElement && currentElement >= 0" color="light" name="radio-button-off"></ion-icon>
+            <ion-row>
+              <ion-col col-7>
+                <span *ngIf="waypoint.name">{{waypoint.name}}</span>
+                <span *ngIf="!waypoint.name" class="no-name-waypoint" translate>waypoints-detail-no-name</span>
+              </ion-col>
+              <ion-col>
+                Type
+                <b>{{ movementTypes[waypoint.command.movement_type] | translate }}</b>
+              </ion-col>
+              <ion-col col-2>
+                Time
+                <b>{{ waypoint.command.movement_attributes[0] == 255 ? 'Fly' : waypoint.command.movement_attributes[0] + ' s' }}</b>
+              </ion-col>
+            </ion-row>
+          </ion-item>
+          <ion-item-options side="right">
+              <button ion-button color="light" (click)="slidingItems.close(); itemClone(i, waypoint); $event.stopPropagation();">
+                <ion-icon name="copy"></ion-icon>
+                <span translate>waypoints-detail-clone</span>
+              </button>
+              <button ion-button color="light" (click)="slidingItems.close(); toggleSort($event); $event.stopPropagation();">
+                <ion-icon name="funnel"></ion-icon>
+                <span translate>waypoints-detail-sort</span>
+              </button>
+              <button ion-button color="danger" (click)="slidingItems.close(); itemDelete(i, waypoint); $event.stopPropagation();">
+                <ion-icon name="trash"></ion-icon>
+                <span translate>waypoints-detail-delete</span>
+              </button>
+          </ion-item-options>
+        </ion-item-sliding>
+      </ion-list>
+
+
+
+      <div class="waypoints-player">
+          <ion-row>
+            <ion-col col-4>
+              <div class="waypoints-player-name">
+                <h2 (click)="onEditName()">{{path.name}}</h2>
+              </div>
+            </ion-col>
+            <ion-col col-auto col-4>
+              <ion-row>
+                <ion-col></ion-col>
+                <ion-col col-3>
+                    <button ion-fab mini [color]="loopCount != 0 ? 'primary' : 'light-gray'" (click)="loopClicked()">
+                      <ion-icon name="repeat"></ion-icon>
+                    </button>
+                    <div class="loop-badge" [hidden]="loopCount == 0 || loopRemaining < 0">{{loopRemaining}}</div>
+                    <div class="loop-badge" [hidden]="loopCount == 0 || loopRemaining >= 0">∞</div>
+                </ion-col>
+                <ion-col col-3>
+                    <button ion-fab color="primary" (click)="runClicked($event)" [hidden]="ros.running" [disabled]="sorting || path.waypoints == 0"><ion-icon name="play"></ion-icon></button>
+                    <button ion-fab color="primary" (click)="ros.pauseQueue()" [hidden]="!ros.running || ros.paused"><ion-icon name="pause"></ion-icon></button>
+                    <button ion-fab color="primary" (click)="ros.resumeQueue()" [hidden]="!ros.running || !ros.paused"><ion-icon name="play"></ion-icon></button>
+                </ion-col>
+                <ion-col col-3>
+                    <button ion-fab mini color="primary" (click)="stopClicked($event)" [disabled]="!ros.running && currentElement == -1"><ion-icon name="square"></ion-icon></button>
+                </ion-col>
+                <ion-col></ion-col>
+              </ion-row>
+            </ion-col>
+            <ion-col col-4>
+              <edo-range-wrapper [speed]="speed">
+                <ion-range min="0" max="100" step="5" snaps="true" [(ngModel)]="speed" [disabled]="sorting || currentElement >= 0">
+                </ion-range>
+              </edo-range-wrapper>
+            </ion-col>
+          </ion-row>
+      </div>
+
+    </ion-card>
+  </div>
+
+</ion-content>

@@ -1,0 +1,32 @@
+<button class="fixed-disconnect-button" ion-button icon-left clear (click)="disconnect()">
+  <ion-icon name="arrow-back"></ion-icon>
+  <span translate>disconnect</span>
+</button>
+
+<ion-content>
+  <ion-grid>
+    <ion-row align-items-center justify-content-center>
+      <ion-col align-self-center text-center>
+        <img src="assets/img/edo-4-axes-1.jpg" style="width: 42vw;" />
+      </ion-col>
+      <ion-col align-self-center text-center>
+        <div class="configuration-board-instr">
+          <h3>Status: </h3>
+          <p>{{lastMessage}}</p>
+        </div>
+        <div class="configuration-board-instr" [hidden]="currentJoint > 0">
+          <h3>Reset CAN</h3>
+          <p>Connect all board to reset them</p>
+          <button ion-button (click)="next()" [disabled]="status != 0">Reset</button>
+        </div>
+        <div class="configuration-board-instr" [hidden]="currentJoint == 0">
+          <h3>Scheda numero {{currentJoint}}</h3>
+          <p [hidden]="status == 4">Collega la scheda {{currentJoint}}</p>
+          <p [hidden]="status != 4">Scollega e ricollega il cavo ....</p>
+          <button ion-button (click)="next()" [hidden]="status == 3" [disabled]="status != 0 && status != 4">Continue</button>
+          <button ion-button (click)="restart()" [hidden]="status != 3">Restart</button>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

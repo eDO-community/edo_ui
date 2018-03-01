@@ -1,0 +1,11 @@
+<svg clip-rule="evenodd" fill-rule="evenodd" height="200" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="1.5" viewBox="0 0 200 200" width="200"
+  xmlns="http://www.w3.org/2000/svg">
+  <g fill="none" stroke="#c1c1c1">
+    <ellipse cx="100" cy="100"/>
+    <g stroke-width="5">
+      <path (click)="axisClick(0)" d="m .83429006 100.76999s-4.25199996 28.786 45.18599994 44.07c35.251 10.899 100.243 10.552 129.528-8.95 13.896-9.254 25.443-16.942 24.005-36.027997"/>
+      <path (click)="axisClick(1)" d="m60.06029 8.7499934s29.846-13.519 61.954 9.4849996c29.994 21.489 61.523 65.737 52.755 123.739997-2.202 14.57-7.325 35.07-31.09 47.013"/>
+      <path (click)="axisClick(2)" d="m139.86829 8.7499934s-29.846-13.519-61.955 9.4849996c-29.994 21.489-61.523 65.737-52.755 123.739997 2.203 14.57 7.325 35.07 31.091 47.013"/>
+    </g>
+  </g>
+</svg>

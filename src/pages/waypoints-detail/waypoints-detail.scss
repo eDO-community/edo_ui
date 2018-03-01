@@ -1,0 +1,170 @@
+/**
+ * @license
+ * Copyright (c) 2017, COMAU S.p.A.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * The views and conclusions contained in the software and documentation are those
+ * of the authors and should not be interpreted as representing official policies,
+ * either expressed or implied, of the FreeBSD Project.
+ */
+
+page-waypoints-detail {
+  ion-item ion-spinner[item-start] + .item-inner {
+    margin-left: 24px;
+  }
+
+  ion-label{
+    margin: 0 !important;
+  }
+
+  ion-toggle{
+    display: inline-block;
+    vertical-align: top;
+    vertical-align: -webkit-baseline-middle;
+
+    &.toggle-md .toggle-icon{
+      background-color: #ccc;
+    }
+  }
+
+  ion-spinner {
+    width: 24px;
+    height: 24px;
+  }
+
+  ion-content {
+    background-color: color($colors, light-gray) !important;
+  }
+
+  .scroll-content{
+    padding-bottom: 0 !important;
+  }
+
+  ion-card{
+    height: 100% !important;
+    margin-bottom: 0 !important;
+
+    .list-md{
+      //FIXME: find a better idea !!
+      overflow-y: scroll;
+      height: calc(100% - 114px);
+
+      .item{
+        border-bottom: 1px solid $list-md-border-color;
+      }
+    }
+
+    .loop-badge{
+      position: absolute;
+      right: 0px;
+      top: 5px;
+      background: #f00;
+      padding: 4px;
+      border-radius: 20px;
+      line-height: 1;
+      font-weight: bold;
+      font-size: 1.3rem;
+      color: #fff;
+      min-width: 20px;
+      text-align: center;
+    }
+  }
+
+  .ion-card-wrapper {
+    max-width: 850px;
+    margin: 0 auto;
+    width: 100%;
+    height: calc(100% - 20px) !important;
+  }
+
+  .ion-action-wrapper{
+    max-width: 750px;
+    margin: 0 auto;
+  }
+
+  [big-margin-bottom]{
+    margin-bottom: 140px;
+  }
+
+  .ion-md-play:before {
+    padding-left: 4px;
+  }
+
+  .waypoints-player {
+    padding: 20px;
+    border-top: 1px solid #dedede;
+
+    .waypoints-player-name {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      h2 {
+        font-size: 18px;
+        color: color($colors, primary);
+      }
+    }
+  }
+
+  .no-waypoints {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    max-width: 300px;
+    text-align: center;
+    bottom: 215px;
+
+    page-waypoints-list & {
+      bottom: 95px;
+    }
+
+    .no-waypoints-big-image {
+      max-width: 110px;
+      margin: 0 auto;
+    }
+
+    p {
+      color: color($colors, primary);
+      font-size: 16px;
+      padding: 5px 0;
+    }
+
+    .no-waypoints-small-image {
+      max-width: 20px;
+      margin: 0 auto;
+    }
+  }
+
+  .icon-space {
+    height: 56px;
+    margin: 9px 8px 9px 19px !important;
+    display: flex;
+    align-items: center;
+  }
+
+  .no-name-waypoint {
+    color: #7c7f82;
+  }
+}
+
+

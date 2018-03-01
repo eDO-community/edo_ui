@@ -1,0 +1,125 @@
+/**
+ * @license
+ * Copyright (c) 2017, COMAU S.p.A.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * The views and conclusions contained in the software and documentation are those
+ * of the authors and should not be interpreted as representing official policies,
+ * either expressed or implied, of the FreeBSD Project.
+ */
+
+page-waypoints-editor {
+  ion-app.md & .scroll-content {
+    padding-top: 0 !important;
+  }
+
+  ion-range{
+    padding: 0 !important;
+    .label-md {
+      color: $label-md-text-color;
+    }
+  }
+
+  .button-save {
+    margin: 8px 6px 0 0;
+  }
+  .button-green {
+    background-color: #20b74c;
+    width: 100%;
+  }
+
+  .waypoints-info-container {
+    padding: 20px 20px 0;
+    background-color: color($colors, light-gray);
+    .waypoints-info {
+      background-color: white;
+      box-shadow: 0px 0px 20px 0px rgba(215, 221, 228, 0.75);
+      border-radius: 7px;
+      padding: 2px 18px 10px 5px;
+
+      ion-select {
+        max-width: 90%;
+      }
+
+      edo-range-wrapper {
+        margin: 0;
+      }
+
+      .margin-top {
+        margin-top: 10px;
+      }
+
+      .item-md.item-input.ng-valid.item-input-has-value:not(.input-has-focus):not(.item-input-has-focus) .item-inner, .item-md.item-input.ng-valid.input-has-value:not(.input-has-focus):not(.item-input-has-focus) .item-inner {
+        border-color: #dedede;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+      }
+    }
+  }
+}
+
+.waypoint-goto {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+ros-jog-movement .ros-jog-movement-positions {
+  padding: 10px 14px 0;
+}
+
+joystick {
+  padding: 5px 20px 20px;
+}
+
+ion-modal.modal-waypoints-editor{
+  @media only screen and (min-height: 600px) {
+    ion-backdrop {
+      visibility: visible !important;
+    }
+  }
+
+  .modal-wrapper {
+    width: 100% !important;
+
+    @media only screen and (min-height: 600px) {
+      position: absolute;
+
+      height: 527px !important;
+
+      top:auto !important;
+      left:0 !important;
+      right:0 !important;
+      bottom:0 !important;
+    }
+    @media only screen and (min-width: 1200px) {
+      height: 587px !important;
+    }
+  }
+}
+
+ion-app.md page-waypoints-editor .scroll-content {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
