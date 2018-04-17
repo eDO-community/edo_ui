@@ -29,7 +29,7 @@
  */
 
 import { Component } from '@angular/core';
-import { NavController, AlertController } from 'ionic-angular';
+import { NavController, AlertController, MenuController } from 'ionic-angular';
 import { RosService, CurrentState } from '../../services/index';
 import { Subscription } from 'rxjs/Subscription';
 import { TranslateService } from '@ngx-translate/core';
@@ -42,24 +42,33 @@ import { ConfigurationBoardPage } from '../configuration-board/configuration-boa
   templateUrl: 'configuration.html'
 })
 export class ConfigurationPage {
-  private initializing:boolean = false;
+  private initializing: boolean = false;
 
   private currentStateChangeEventSubscription:Subscription;
   private machineStateTimeoutTimer:number;
 
   constructor(private navCtrl: NavController, private alertCtrl: AlertController,
-    private toastCtrl:ToastController,
+    private toastCtrl: ToastController,
     private rosService: RosService,
-    public translateService: TranslateService) {
-      this.currentStateChangeEventSubscription = this.rosService.machineStateChangeEvent.subscribe((status) => {
-        if (status.current_state > CurrentState.INIT && this.machineStateTimeoutTimer > 0){
-          window.clearTimeout(this.machineStateTimeoutTimer);
-        }
-      });
+    public translateService: TranslateService,
+    private menu: MenuController) {
+    this.currentStateChangeEventSubscription = this.rosService.machineStateChangeEvent.subscribe((status) => {
+      if (status.current_state > CurrentState.INIT && this.machineStateTimeoutTimer > 0) {
+        window.clearTimeout(this.machineStateTimeoutTimer);
+      }
+    });
+  }
+
+  ionViewDidEnter() {
+    this.menu.swipeEnable(false);
+  }
+
+  ionViewWillLeave() {
+    this.menu.swipeEnable(true);
   }
 
   ngOnDestroy() {
-    if (this.machineStateTimeoutTimer > 0){
+    if (this.machineStateTimeoutTimer > 0) {
       window.clearTimeout(this.machineStateTimeoutTimer);
     }
     this.currentStateChangeEventSubscription.unsubscribe();
@@ -67,11 +76,11 @@ export class ConfigurationPage {
 
   initialize(axis:number) {
     let confirm = this.alertCtrl.create({
-      title: 'Conferma configurazione',
-      message: 'Vuoi procedere con la configurazione di E.Do con ' + axis + ' assi con pinza?',
+      title: this.translateService.instant(_('configuration-confirm-configuration')),
+      message: this.translateService.instant(_('configuration-proceed-configuration')) + axis + this.translateService.instant(_('configuration-axis')),
       buttons: [
         {
-          text: 'Annulla',
+          text: this.translateService.instant(_('settings-cancel')),
           handler: () => {
             console.log('Disagree clicked');
           }
@@ -80,7 +89,7 @@ export class ConfigurationPage {
           text: 'Procedi',
           handler: () => {
             this.initializing = true;
-            this.machineStateTimeoutTimer = window.setTimeout(()=>{
+            this.machineStateTimeoutTimer = window.setTimeout(() => {
               this.initializing = false;
               this.toastCtrl.create({
                 message: this.translateService.instant(_('no-machine-state-after-connect')),
@@ -99,7 +108,7 @@ export class ConfigurationPage {
     confirm.present();
   }
 
-  private disconnect(){
+  private disconnect() {
     this.rosService.disconnect();
   }
 

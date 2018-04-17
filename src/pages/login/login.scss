@@ -34,6 +34,13 @@ page-login {
     top: 10px;
     left: 10px;
   }
+
+  .app-version {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    color: color($colors, dark-gray);
+  }
 }
 
 page-login .login-wrapper,

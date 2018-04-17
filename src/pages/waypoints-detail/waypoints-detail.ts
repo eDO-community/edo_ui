@@ -89,12 +89,12 @@ export class WaypointsDetailPage {
     this.closeAllItems();
     if (this.currentElement < 0){
       let confirm = this.alertCtrl.create({
-        title: 'Delete waypoint?',
-        message: `Do you want to delete the move with name ${item.name}`,
+        title: this.translateService.instant('waypoints-detail-delete-title'),
+        message: this.translateService.instant('waypoints-detail-delete-description') + ` ${item.name}`,
         buttons: [
-          { text: 'Disagree' },
+          { text: this.translateService.instant('waypoints-detail-disagree') },
           {
-            text: 'Agree',
+            text: this.translateService.instant('waypoints-detail-agree'),
             handler: () => {
               let result = this.path.removeWaypoint(id);
               this.saveCurrentWaypath();
@@ -112,8 +112,8 @@ export class WaypointsDetailPage {
     this.closeAllItems();
     if (this.currentElement < 0){
       let confirm = this.alertCtrl.create({
-        title: 'Clone waypoint',
-        message: `Enter the new name for ${item.name}`,
+        title: this.translateService.instant('waypoints-detail-clone-title'),
+        message: this.translateService.instant('waypoints-detail-clone-description') + ` ${item.name}`,
         inputs: [
           {
             name: 'name',
@@ -122,9 +122,9 @@ export class WaypointsDetailPage {
           }
         ],
         buttons: [
-          { text: 'Disagree' },
+          { text: this.translateService.instant('waypoints-detail-disagree') },
           {
-            text: 'Agree',
+            text: this.translateService.instant('waypoints-detail-agree'),
             handler: data => {
               let result = this.path.addWaypoint(data.name, item.command.data, item.command.movement_type, item.command.movement_attributes[0], item.command.ovr, id + 1);
               this.saveCurrentWaypath();

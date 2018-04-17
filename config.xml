@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.comau.edo.app" version="0.0.7" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.comau.edo.app" version="0.0.8" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>e.DO</name>
     <description>e.DO</description>
     <author email="edo@comau.com" href="http://edo.comau.com/">e.DO - Comau S.p.a.</author>
@@ -56,6 +56,7 @@
     <engine name="browser" spec="^4.1.0" />
     <engine name="ios" spec="4.2.0" />
     <engine name="windows" spec="^5.0.0" />
+    <plugin name="cordova-plugin-app-version" spec="^0.1.9" />
     <plugin name="cordova-plugin-console" spec="^1.0.7" />
     <plugin name="cordova-plugin-device" spec="^1.1.6" />
     <plugin name="cordova-plugin-globalization" spec="^1.0.7" />

@@ -32,6 +32,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { ErrorHandler, NgModule } from '@angular/core';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 import { IonicStorageModule } from '@ionic/storage';
+import { AppVersion } from '@ionic-native/app-version';
 
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -56,6 +57,7 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { Globalization } from '@ionic-native/globalization';
 
+import { ConfigurationBoardGuideComponent } from '../components/configuration-board-guide/configuration-board-guide';
 import { EDOUnlockModalComponent } from '../components/edo-unlock-modal/edo-unlock-modal';
 import { PluginService } from '../services';
 import { SettingsPluginsPage } from '../pages/settings-plugins/settings-plugins';
@@ -72,6 +74,7 @@ export function createTranslateLoader(http: Http) {
     LoginPage,
     HomePage,
     ConfigurationPage,
+    ConfigurationBoardGuideComponent,
     ConfigurationBoardPage,
     CalibrationPage,
     WaypointsListPage,
@@ -104,6 +107,7 @@ export function createTranslateLoader(http: Http) {
     LoginPage,
     HomePage,
     ConfigurationPage,
+    ConfigurationBoardGuideComponent,
     ConfigurationBoardPage,
     CalibrationPage,
     WaypointsListPage,
@@ -115,6 +119,7 @@ export function createTranslateLoader(http: Http) {
     SettingsPluginsPage
   ],
   providers: [
+    AppVersion,
     StatusBar,
     SplashScreen,
     { provide: ErrorHandler, useClass: IonicErrorHandler },

@@ -41,19 +41,19 @@ ionic cordova run android
 
 ### Android
 ```
-ionic cordova build --release --prod android
+ionic cordova build --release --minifyjs --minifycss android
 jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore edo-ui-release-key.keystore platforms/android/build/outputs/apk/android-release-unsigned.apk edo-ui
 zipalign -v 4 platforms/android/build/outputs/apk/android-release-unsigned.apk platforms/android/build/outputs/apk/edo-ui-signed.apk
 ```
 
 ### Browser
 ```
-ionic cordova build --release --prod browser
+ionic cordova build --release --minifyjs --minifycss browser
 ```
 
 ### Windows 10 universal app
 ```
-ionic cordova build --release --prod windows -- --arch=x64 --appx=uap
+ionic cordova build --release --minifyjs --minifycss windows -- --arch=x64 --appx=uap
 ```
 
 *Note: if you have issue building SQLite3.UWP make sure you select in SQLite3.UWP's VS project the Platform Toolset v140*

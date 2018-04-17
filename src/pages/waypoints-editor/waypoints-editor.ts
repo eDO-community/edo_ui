@@ -100,9 +100,9 @@ export class WaypointsEditorPage {
       timeout = 255;
     }
     if (this.waypoint == null){
-      this.path.addWaypoint(this.moveName, Utils.cloneArray(this.ros.joints), moveType, timeout);
+      this.path.addWaypoint(this.moveName, Utils.cloneArray(this.ros.jointsTarget), moveType, timeout);
     }else{
-      this.path.updateWaypoint(this.waypoint, this.moveName, Utils.cloneArray(this.ros.joints), moveType, timeout)
+      this.path.updateWaypoint(this.waypoint, this.moveName, Utils.cloneArray(this.ros.jointsTarget), moveType, timeout)
     }
     this.viewCtrl.dismiss({save:true});
   }

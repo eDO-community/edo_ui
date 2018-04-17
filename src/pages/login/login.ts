@@ -29,7 +29,7 @@
  */
 
 import { Component } from '@angular/core';
-import { NavController, NavParams, ToastController, AlertController } from 'ionic-angular';
+import { NavController, NavParams, ToastController, AlertController, MenuController } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { Storage } from '@ionic/storage';
 import { HomePage } from '../home/home';
@@ -40,6 +40,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { TranslateService } from '@ngx-translate/core';
 import { Globalization } from '@ionic-native/globalization';
 import { ConfigurationPage } from '../configuration/configuration';
+import { AppVersion } from '@ionic-native/app-version';
 
 declare var cordova: any | undefined;
 
@@ -60,11 +61,15 @@ export class LoginPage {
   private currentStateChangeEventSubscription:Subscription;
   private machineStateTimeoutTimer:number;
 
+  private appVersion:string;
+
   constructor(private navCtrl: NavController, private navParams: NavParams,
     private statusBar: StatusBar, private toastCtrl:ToastController,
     private storage: Storage, private rosService: RosService,
     public translateService: TranslateService, private alertCtrl: AlertController,
-    private globalization: Globalization) {
+    private globalization: Globalization,
+    private app: AppVersion,
+    private menu: MenuController) {
     this.currentStateChangeEventSubscription = this.rosService.machineStateChangeEvent.subscribe((status) => {
       if (status.current_state >= CurrentState.INIT && this.machineStateTimeoutTimer > 0){
         window.clearTimeout(this.machineStateTimeoutTimer);
@@ -93,7 +98,22 @@ export class LoginPage {
       }
       this.ready = true;
     });
+
+    this.app.getVersionNumber().then(version => {
+      this.appVersion = version;
+    }).catch(error => {
+      this.appVersion = "N/A";
+    });
   }
+
+  ionViewDidEnter() {
+      this.menu.swipeEnable(false);
+  }
+
+  ionViewWillLeave() {
+      this.menu.swipeEnable(true);
+   }
+
 
   ngOnDestroy() {
     if (this.machineStateTimeoutTimer > 0){

@@ -1,4 +1,3 @@
-<!-- TODO: set icons instead of text -->
 <ion-grid no-padding>
   <ion-row align-item-center>
     <ion-col col-4 *ngIf="mode == JoystickMode.CARTESIAN" class="movements" align-item-center>
@@ -249,10 +248,10 @@
         </ion-col>
       </ion-row>
     </ion-col>
-    <ion-col col-4 *ngIf="mode == JoystickMode.CARTESIAN" class="movements" align-item-center text-center>
+    <ion-col col-4 *ngIf="mode == JoystickMode.CARTESIAN" class="joint-button-set movements" align-item-center text-center>
       <ion-row class="rotation-button-set" justify-content-center>
         <ion-col align-self-center>
-          <div class="rotation-axis-selector square-dimensions">
+          <div class="rotation-axis-selector">
 
               <svg width="100%" height="100%" viewBox="0 0 166 166" version="1.1" xmlns="http://www.w3.org/2000/svg" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
                 <g>
@@ -283,8 +282,8 @@
 
           </div>
           </ion-col>
-          <ion-col col-3>
-          <div text-center class="rotation-axis vertical-buttons">
+          <ion-col col-4 align-self-center class="joint-buttons">
+            <!--
             <button #pos="holdRef" [disabled]="neg.value > 0" hold (holding)="onCartesianValueChange(currentAxis, 1)" (holdingCancel)="onCartesianValueChange(currentAxis, 0)" class="arrow-button " >
               <svg class="arrow-button-svg" width="100%" height="100%" viewBox="0 0 80 80" version="1.1" xmlns="http://www.w3.org/2000/svg">
                 <path class="arrow-button-svg-bg" d="M10,67.912l0,-60.256c0,-2.57 1.907,-4.656 4.257,-4.656l51.613,0c2.279,0 4.13,2.024 4.13,4.516l0,60.396l-30,11.088l-30,-11.088l0,0Z" />
@@ -297,7 +296,17 @@
                 <path class="arrow-button-svg-arrow" d="M40,58.685l-12,-12l24,0l-12,12Z" />
               </svg>
             </button>
-          </div>
+            -->
+            <ion-row>
+                <button id="jogadd" ion-button icon-only #pos="holdRef" [disabled]="neg.holdingCount > 0" hold (holding)="onCartesianValueChange(currentAxis, 1)" (holdingCancel)="onCartesianValueChange(currentAxis, 0)">
+                  <ion-icon name="add"></ion-icon>
+                </button>
+              </ion-row>
+              <ion-row>
+                <button ion-button icon-only #neg="holdRef" [disabled]="pos.holdingCount > 0" hold (holding)="onCartesianValueChange(currentAxis, -1)" (holdingCancel)="onCartesianValueChange(currentAxis, 0)">
+                  <ion-icon name="remove"></ion-icon>
+                </button>
+              </ion-row>
         </ion-col>
       </ion-row>
     </ion-col>

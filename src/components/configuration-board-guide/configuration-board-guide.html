@@ -1,0 +1,76 @@
+<ion-row>
+    <ion-col>
+        <h1><span translate>configuration-board-guide-title</span></h1>
+    </ion-col>
+</ion-row>
+<ion-row align-items-center *ngIf="currentSlides[currentSlide] == 1">
+  <ion-col>
+    <img src="assets/img/board-config/config-step-1.jpg">
+    <p>Rimuovere le coperture degli AX1 – 4 -6 svitando le due viti M3x8 mediante chiave a brugola da 2,5mm.</p>
+  </ion-col>
+</ion-row>
+<ion-row *ngIf="currentSlides[currentSlide] == 2">
+  <ion-col>
+    <img src="assets/img/board-config/config-step-2.jpg">
+    <p>Rimuovere le coperture a pressione degli AX2-3-5.</p>
+  </ion-col>
+</ion-row>
+<ion-row *ngIf="currentSlides[currentSlide] == 10">
+  <ion-col>
+    <img src="assets/img/board-config/config-step-10.jpg">
+    <p>Sconnettere connettori CAN SUPP. Di tutti gli assi.</p>
+  </ion-col>
+</ion-row>
+<ion-row *ngIf="currentSlides[currentSlide] == 11">
+  <ion-col>
+    <img src="assets/img/board-config/config-step-11.jpg">
+    <p>Connetter cavo CAN SUPP dell'AX1.
+      Nel momento in cui si inserisce il connettore, il led della scheda lampeggerà velocemente per alcuni secondi per poi lampeggiare più lentamente.
+      </p>
+  </ion-col>
+</ion-row>
+<ion-row *ngIf="currentSlides[currentSlide] == 20">
+  <ion-col>
+    <img src="assets/img/board-config/config-step-11.jpg">
+    <p>Connetter cavo CAN SUPP dell'AX2.
+      Nel momento in cui si inserisce il connettore, il led della scheda lampeggerà velocemente per alcuni secondi per poi lampeggiare più lentamente.
+      </p>
+  </ion-col>
+</ion-row>
+<ion-row *ngIf="currentSlides[currentSlide] == 30">
+  <ion-col>
+    <img src="assets/img/board-config/config-step-11.jpg">
+    <p>Connetter cavo CAN SUPP dell'AX3.
+      Nel momento in cui si inserisce il connettore, il led della scheda lampeggerà velocemente per alcuni secondi per poi lampeggiare più lentamente.
+      </p>
+  </ion-col>
+</ion-row>
+<ion-row *ngIf="currentSlides[currentSlide] == 40">
+  <ion-col>
+    <img src="assets/img/board-config/config-step-11.jpg">
+    <p>Connetter cavo CAN SUPP dell'AX4.
+      Nel momento in cui si inserisce il connettore, il led della scheda lampeggerà velocemente per alcuni secondi per poi lampeggiare più lentamente.
+      </p>
+  </ion-col>
+</ion-row>
+<ion-row *ngIf="currentSlides[currentSlide] == 50">
+  <ion-col>
+    <img src="assets/img/board-config/config-step-11.jpg">
+    <p>Connetter cavo CAN SUPP dell'AX5.
+      Nel momento in cui si inserisce il connettore, il led della scheda lampeggerà velocemente per alcuni secondi per poi lampeggiare più lentamente.
+      </p>
+  </ion-col>
+</ion-row>
+<ion-row *ngIf="currentSlides[currentSlide] == 60">
+  <ion-col>
+    <img src="assets/img/board-config/config-step-11.jpg">
+    <p>Connetter cavo CAN SUPP dell'AX6.
+      Nel momento in cui si inserisce il connettore, il led della scheda lampeggerà velocemente per alcuni secondi per poi lampeggiare più lentamente.
+      </p>
+  </ion-col>
+</ion-row>
+<ion-row>
+  <ion-col>
+      <button ion-button (click)="next()"><span translate>configuration-board-guide-continue</span></button>
+  </ion-col>
+</ion-row>

@@ -28,42 +28,8 @@
  * either expressed or implied, of the FreeBSD Project.
  */
 
-page-settings {
-  ion-content {
-    background-color: color($colors, light-gray) !important;
-  }
-
-  .scroll-content{
-    padding-bottom: 0 !important;
-  }
-
-  ion-card{
-    height: 100% !important;
-    margin-bottom: 0 !important;
-
-    .list-md{
-      overflow-y: scroll;
-      height: calc(100% - 77px);
-
-      .item{
-        border-bottom: 1px solid $list-md-border-color;
-      }
+[edo-ros-status] {
+    .ros-status-wifi-icon {
+        font-size: 1.9em;
     }
-  }
-
-  .flag-img {
-    width: 18px;
-    display: inline-block;
-  }
-
-  .flag-txt {
-    display: inline-block;
-  }
-
-  .ion-card-wrapper {
-    max-width: 750px;
-    margin: 0 auto;
-    width: 100%;
-    height: calc(100% - 20px) !important;
-  }
 }

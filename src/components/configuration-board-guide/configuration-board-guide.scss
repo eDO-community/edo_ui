@@ -28,42 +28,37 @@
  * either expressed or implied, of the FreeBSD Project.
  */
 
-page-settings {
-  ion-content {
-    background-color: color($colors, light-gray) !important;
-  }
-
-  .scroll-content{
-    padding-bottom: 0 !important;
-  }
-
-  ion-card{
-    height: 100% !important;
-    margin-bottom: 0 !important;
-
-    .list-md{
-      overflow-y: scroll;
-      height: calc(100% - 77px);
-
-      .item{
-        border-bottom: 1px solid $list-md-border-color;
-      }
+ .configuration-board-guide {
+    ion-backdrop {
+        opacity: 0.85;
+        background-color: #282A33;
     }
-  }
 
-  .flag-img {
-    width: 18px;
-    display: inline-block;
-  }
+    &.popover-md .popover-content {
+        width: 350px;
+        text-align: center;
+        padding: 20px 20px;
+        border-radius: 6px;
+        box-shadow: 0 0 20px rgba(30, 31, 31, 0.35);
+    }
 
-  .flag-txt {
-    display: inline-block;
-  }
+    h1 {
+        margin: 0 0 5px;
+        font-size: 22px;
+        color: color($colors, primary);
+    }
 
-  .ion-card-wrapper {
-    max-width: 750px;
-    margin: 0 auto;
-    width: 100%;
-    height: calc(100% - 20px) !important;
-  }
+    ion-icon {
+        font-size: 26px;
+    }
+
+    p {
+        font-size: 15px;
+        line-height: 22px;
+        margin-bottom: 3px;
+    }
+
+    img {
+        width: 100%;
+    }
 }

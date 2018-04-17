@@ -206,7 +206,48 @@ export class EDOApp {
   }
 
   async disconnect(){
-    this.nav.setRoot(this.rootPage);
-    this.rosService.disconnect();
+    if (this.rosService.joints != null){
+      let alert = this.alertCtrl.create({
+        title: this.translateService.instant(_('logout-title')),
+        buttons: [],
+        enableBackdropDismiss: false
+      });
+
+      alert.addButton({
+        text: this.translateService.instant(_('logout-confirm')),
+        handler: () => {
+          this.nav.setRoot(this.rootPage);
+          this.rosService.disconnect();
+        }
+      });
+      if (!this.isCalibrationPosition() && this.rosService.machineState.current_state != CurrentState.BREAKED){
+        alert.setMessage(this.translateService.instant(_('logout-message-not-in-calibration')));
+        alert.addButton({
+          text: this.translateService.instant(_('logout-goto-joystick')),
+          handler: () => {
+            this.nav.setRoot(HomePage);
+          }
+        });
+      }else{
+        alert.setMessage(this.translateService.instant(_('logout-message')));
+      }
+      alert.addButton({
+        text: this.translateService.instant(_('logout-dismiss')),
+      });
+      alert.present();
+    }else{
+      this.nav.setRoot(this.rootPage);
+      this.rosService.disconnect();
+    }
+  }
+
+  isCalibrationPosition():boolean{
+    for (var i:number = 0; i < this.rosService.joints.length; i++){
+      if (Math.abs(this.rosService.joints[i]) > 0.5){
+        return false;
+      }
+    }
+    return true;
   }
 }
+

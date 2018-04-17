@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright (c) 2017, COMAU S.p.A.
+ * Copyright (c) 2018, COMAU S.p.A.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,42 +28,31 @@
  * either expressed or implied, of the FreeBSD Project.
  */
 
-page-settings {
-  ion-content {
-    background-color: color($colors, light-gray) !important;
-  }
+import { Component } from '@angular/core';
+import { NavParams } from 'ionic-angular';
+import { RosService } from '../../services';
 
-  .scroll-content{
-    padding-bottom: 0 !important;
-  }
+@Component({
+  selector: 'configuration-board-guide',
+  templateUrl: 'configuration-board-guide.html'
+})
+export class ConfigurationBoardGuideComponent {
+  private slides:number[][] = [[1,2],[10,11],[20],[30],[40],[50],[60]];
+  private currentSlides:number[];
+  private currentSlide:number = 0;
 
-  ion-card{
-    height: 100% !important;
-    margin-bottom: 0 !important;
-
-    .list-md{
-      overflow-y: scroll;
-      height: calc(100% - 77px);
-
-      .item{
-        border-bottom: 1px solid $list-md-border-color;
-      }
+  constructor(private navParams: NavParams) {
+    this.currentSlides = this.slides[this.navParams.get("sliderId")];
+    if (this.currentSlides == undefined){
+      this.currentSlides = [0];
+      this.navParams.get("dismiss")();
     }
   }
 
-  .flag-img {
-    width: 18px;
-    display: inline-block;
-  }
-
-  .flag-txt {
-    display: inline-block;
-  }
-
-  .ion-card-wrapper {
-    max-width: 750px;
-    margin: 0 auto;
-    width: 100%;
-    height: calc(100% - 20px) !important;
+  private next(){
+    this.currentSlide = this.currentSlide + 1;
+    if (this.currentSlide == this.currentSlides.length){
+      this.navParams.get("dismiss")();
+    }
   }
 }

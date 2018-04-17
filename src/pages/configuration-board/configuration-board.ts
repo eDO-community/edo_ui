@@ -29,52 +29,84 @@
  */
 
 import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { NavController, PopoverController, MenuController } from 'ionic-angular';
 import { RosService } from '../../services/index';
 import { Subscription } from 'rxjs/Subscription';
+import { ConfigurationBoardGuideComponent } from '../../components/configuration-board-guide/configuration-board-guide';
 
 @Component({
   selector: 'page-configuration-board',
   templateUrl: 'configuration-board.html'
 })
 export class ConfigurationBoardPage {
-  private setJointIdStatuSubscription:Subscription;
+  private setJointIdStatuSubscription: Subscription;
 
-  private status:number = 0;
-  private lastMessage:string;
-  private currentJoint:number = 0;
+  private status: number = 0;
+  private lastMessage: string;
+  private currentJoint: number = 0;
+  private configurationBoardGuide;
 
   constructor(private navCtrl: NavController,
-    private rosService:RosService) {
-      this.setJointIdStatuSubscription = this.rosService.setJointIdStatusEvent.subscribe((event) => {
-        this.status = event.command;
-        if (event.command == 1){
-          this.lastMessage = event.data;
-        }else if (event.command == 2){
-          this.currentJoint++;
-        }else if (event.command == 0 && this.currentJoint == 0){
-          this.currentJoint++;
+    private popoverCtrl: PopoverController,
+    private rosService: RosService,
+    private menu: MenuController) {
+    this.setJointIdStatuSubscription = this.rosService.setJointIdStatusEvent.subscribe((event) => {
+      this.status = event.command;
+      if (event.command == 1) {
+        this.lastMessage = event.data;
+      } else if (event.command == 2) {
+        this.showConfigurationBoardGuide(1 + this.currentJoint);
+        this.currentJoint++;
+      } else if (event.command == 0 && this.currentJoint == 0) {
+        this.showConfigurationBoardGuide(1);
+        this.currentJoint++;
+      }
+      console.log("Data: " + event.data + " Command: " + event.command);
+    })
+    this.showConfigurationBoardGuide(0);
+  }
+
+  ionViewDidEnter() {
+    this.menu.swipeEnable(false);
+  }
+
+  ionViewWillLeave() {
+    this.menu.swipeEnable(true);
+  }
+
+  private showConfigurationBoardGuide(sliderId: number) {
+    if (this.configurationBoardGuide != null) {
+      this.configurationBoardGuide.dismiss();
+      this.configurationBoardGuide = null;
+    }
+
+    this.configurationBoardGuide = this.popoverCtrl.create(ConfigurationBoardGuideComponent, {
+      dismiss: () => {
+        if (this.configurationBoardGuide != null) {
+          this.configurationBoardGuide.dismiss();
+          this.configurationBoardGuide = null;
         }
-        console.log("Data: " + event.data + " Command: " + event.command);
-      })
+      }, sliderId: sliderId
+    }, { showBackdrop: true, enableBackdropDismiss: false, cssClass: 'configuration-board-guide' });
+    this.configurationBoardGuide.present();
   }
 
   ngOnDestroy() {
     this.setJointIdStatuSubscription.unsubscribe();
   }
 
-  next(){
+  next() {
     this.rosService.sendSetJointId(this.currentJoint);
     this.status = 1;
   }
 
-  restart(){
+  restart() {
     this.currentJoint = 0;
     this.status = -1;
     this.lastMessage = "";
   }
 
-  private disconnect(){
+  private disconnect() {
     this.rosService.disconnect();
   }
 }

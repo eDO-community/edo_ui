@@ -218,6 +218,12 @@ joystick {
     justify-content: center;
     align-items: center;
     margin: 0 auto;
+    width: 175px;
+    height: 175px;
+    @media only screen and (max-width: 1200px) {
+      width: 145px;
+      height: 145px;
+    }
   }
 
   .bg-horizontal::before {

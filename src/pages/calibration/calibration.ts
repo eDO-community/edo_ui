@@ -29,7 +29,7 @@
  */
 
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, MenuController } from 'ionic-angular';
 import { HomePage } from '../home/home';
 import { LoginPage } from '../login/login';
 import { RosService, MovementCommand, MoveType } from '../../services';
@@ -49,8 +49,11 @@ export class CalibrationPage {
 
   private jointsChangeEventSubscription:Subscription;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams,
-    public ros: RosService, private ref: ChangeDetectorRef) {
+  constructor(public navCtrl: NavController,
+    private menu: MenuController,
+    public navParams: NavParams,
+    public ros: RosService,
+    private ref: ChangeDetectorRef) {
       if (navParams.data && navParams.data.firstTime){
         this.firstTime = navParams.data.firstTime;
       }
@@ -60,6 +63,18 @@ export class CalibrationPage {
         this.ref.markForCheck();
       });
   }
+
+  ionViewDidEnter() {
+    if (this.firstTime){
+      this.menu.swipeEnable(false);
+    }
+  }
+
+  ionViewWillLeave() {
+    if (this.firstTime){
+      this.menu.swipeEnable(true);
+    }
+   }
 
   ngOnDestroy() {
     this.jointsChangeEventSubscription.unsubscribe();
@@ -80,24 +95,22 @@ export class CalibrationPage {
   private onCalibrate():void{
     this.ros.sendCalibrateCommand(this.currentJoint);
     this.jointsCalibrated[this.currentJoint] = true;
-    if (this.allCalibrated()){
-      //if (this.firstTime){
-      //  this.navCtrl.setRoot(HomePage);
-      //}
+    var nextToBeCalibrated:number = this.nextToBeCalibrated();
+    if (nextToBeCalibrated < 0){
       this.currentJoint = -2;
       this.jointsCalibrated.fill(false);
     }else{
-      this.currentJoint = -1;
+      this.currentJoint = nextToBeCalibrated;
     }
   }
 
-  private allCalibrated():boolean{
-    for (var jointCalibrated of this.jointsCalibrated) {
-      if (!jointCalibrated){
-        return false;
+  private nextToBeCalibrated():number{
+    for (var i = 0; i < this.jointsCalibrated.length; i++) {
+      if (!this.jointsCalibrated[i]){
+        return i;
       }
     }
-    return true;
+    return -1;
   }
 
   private onReset(event) {
