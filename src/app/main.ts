@@ -59,3 +59,7 @@ import * as ngIonicStorage from '@ionic/storage';
 export { ngIonicStorage };
 import * as ngxTranslateCore from '@ngx-translate/core';
 export { ngxTranslateCore };
+import * as ngIonicNativeCore from '@ionic-native/core';
+export { ngIonicNativeCore };
+import * as ngIonicNativeVibration from '@ionic-native/vibration';
+export { ngIonicNativeVibration };

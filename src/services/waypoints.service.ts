@@ -32,7 +32,7 @@ import { Injectable } from "@angular/core";
 import { Storage } from '@ionic/storage';
 import { SettingsKeys } from '../utils';
 import * as Utils from '../utils';
-import { MovementCommand, MoveType } from "../services";
+import { MovementCommand, MoveType, MoveCommand, Point, Frame } from "../services";
 
 /**
  * Waypoint representing a robot position
@@ -69,10 +69,10 @@ export class WaypointPath {
   /**
    * Add a new Waypoint to the current path at specified index position or at the end.
    */
-  addWaypoint(name: string = '', data: number[], movement_type: MoveType = MoveType.MOVE_TRJNT_J, timeout = 255, speed = 100, index: number = -1) {
+  addWaypoint(target: Point, tool:Frame | string = '', name: string = '', movement_type: MoveType = MoveType.JOINT, delay = 255, speed = 100, index: number = -1) {
     let waypoint: Waypoint = { name:'', command: null };
 
-    this.updateWaypoint(waypoint, name, data, movement_type, timeout, speed)
+    this.updateWaypoint(waypoint, target, tool, name, movement_type, delay, speed)
 
     if (index < 0) {
       this.waypoints.push(waypoint)
@@ -84,13 +84,18 @@ export class WaypointPath {
   /**
    * Update a Waypoint in the current path.
    */
-  updateWaypoint(waypoint:Waypoint, name: string = '', data: number[], movement_type: MoveType = MoveType.MOVE_TRJNT_J, timeout = 255, speed = 100) {
+  updateWaypoint(waypoint:Waypoint, target: Point, tool:Frame | string = '', name: string = '', move_type: MoveType = MoveType.JOINT, delay = 255, speed = 100) {
     let command: MovementCommand = {
-      data: data,
-      size: data.length,
-      movement_type: movement_type,
-      movement_attributes: [timeout],
-      ovr: speed
+      move_command:MoveCommand.EXE_MOVE,
+      move_type: move_type,
+      ovr: speed,
+      delay: delay,
+      cartesian_linear_speed: 0,
+      target: target,
+      via: {cartesian_data:{x:0,y:0,z:0,a:0,e:0,r:0,config_flags:''}, data_type:0, joints_data:[], joints_mask:0},
+      tool: tool,
+      frame: {x:0,y:0,z:0,a:0,e:0,r:0},
+      remote_tool: 0
     };
     waypoint.name = name;
     waypoint.command = command;

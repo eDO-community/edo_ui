@@ -45,6 +45,7 @@ import { _ } from '../../utils';
 export class WaypointsListPage {
   private waypointPaths: Array<WaypointPath> = [];
   private sorting:boolean = false;
+  private loaded: boolean = false
 
   @ViewChildren('slidingItems') private slidingItems: QueryList<any>;
 
@@ -60,6 +61,7 @@ export class WaypointsListPage {
 
   private async refreshList() {
     this.waypointPaths = await this.service.load();
+    this.loaded = true
   }
 
   private itemSelected(i, item) {
@@ -112,13 +114,38 @@ export class WaypointsListPage {
     alert.present();
   }
 
+  private itemClone(i: number, path: WaypointPath){
+    this.closeAllItems();
+    let alert = this.alertCtrl.create({
+      title: this.translateService.instant('waypoints-clone-title'),
+      message: this.translateService.instant('waypoints-clone-description') + ` ${path.name}`,
+      inputs: [
+        {
+          name: 'name',
+          placeholder: this.translateService.instant('waypoints-name'),
+          value: path.name,
+        }
+      ],
+      buttons: [
+        {
+          text: this.translateService.instant('waypoints-disagree'),
+          role: 'cancel'
+        },
+        {
+          text: this.translateService.instant('waypoints-agree'),
+          handler: data => {
+            var newPath = new WaypointPath(data.name, path.waypoints)
+            this.navCtrl.push(WaypointsDetailPage, { path : newPath });
+          }
+        }
+      ],
+      enableBackdropDismiss: false
+    });
+    alert.present();
+}
+
   private async itemReorder(event:any){
-    const element = this.waypointPaths[event.from];
-    this.waypointPaths.splice(event.from, 1);
-    this.waypointPaths.splice(event.to, 0, element);
-
     await this.service.reorder(event.from, event.to);
-
     this.refreshList();
   }
 

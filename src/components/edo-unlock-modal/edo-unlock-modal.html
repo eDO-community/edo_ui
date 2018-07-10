@@ -13,6 +13,6 @@
       <button ion-button (click)="disconnect()"><span translate>unlock-modal-disconnect</span></button>
   </ion-col>
   <ion-col>
-      <button ion-button (click)="unlock()"><span translate>unlock-modal-unlock</span></button>
+      <button ion-button (click)="unlock()"><span [innerHTML]="'unlock-modal-unlock' | translate"></span></button>
   </ion-col>
 </ion-row>

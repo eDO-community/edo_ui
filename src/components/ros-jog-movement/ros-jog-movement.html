@@ -1,79 +1,69 @@
 <div class="ros-jog-movement-positions">
   <ion-grid>
     <ion-row>
-      <ion-col text-center no-padding>
-      <small>X</small>
-      </ion-col>
-      <ion-col text-center no-padding>
-        <small>Y</small>
-      </ion-col>
-      <ion-col text-center no-padding>
-        <small>Z</small>
-      </ion-col>
-      <ion-col text-center no-padding>
-        <small>A</small>
-      </ion-col>
-      <ion-col text-center no-padding>
-        <small>E</small>
-      </ion-col>
-      <ion-col text-center no-padding style="border-right:1px solid #ccc">
-        <small>R</small>
-      </ion-col>
-      <ion-col text-center no-padding>
-        <small>J1</small>
-      </ion-col>
-      <ion-col text-center no-padding>
-        <small>J2</small>
-      </ion-col>
-      <ion-col text-center no-padding>
-        <small>J3</small>
-      </ion-col>
-      <ion-col text-center no-padding>
-        <small>J4</small>
-      </ion-col>
-      <ion-col text-center no-padding>
-        <small>J5</small>
-      </ion-col>
-      <ion-col text-center no-padding>
-        <small>J6</small>
-      </ion-col>
-    </ion-row>
-    <ion-row>
       <ion-col text-center text-nowrap>
+        <small>X</small><br/>
         <b>{{ ros.cartesianPosition.x | edonumber }}</b> mm
       </ion-col>
       <ion-col text-center text-nowrap>
+        <small>Y</small><br/>
         <b>{{ ros.cartesianPosition.y | edonumber }}</b> mm
       </ion-col>
       <ion-col text-center text-nowrap>
+        <small>Z</small><br/>
         <b>{{ ros.cartesianPosition.z | edonumber }}</b> mm
       </ion-col>
       <ion-col text-center text-nowrap>
+        <small>A</small><br/>
         <b>{{ ros.cartesianPosition.a | edonumber }}</b>°
       </ion-col>
       <ion-col text-center text-nowrap>
+        <small>E</small><br/>
         <b>{{ ros.cartesianPosition.e | edonumber }}</b>°
       </ion-col>
       <ion-col text-center text-nowrap style="border-right:1px solid #ccc">
+        <small>R</small><br/>
         <b>{{ ros.cartesianPosition.r | edonumber }}</b>°
       </ion-col>
-      <ion-col text-center text-nowrap>
-        <b>{{ ros.joints[0] | edonumber }}</b>°
+      <ion-col text-center text-nowrap *ngIf="ros.joints.joints_mask % 2 >= 1">
+        <small>J1</small><br/>
+        <b>{{ ros.joints.joints[0].position | edonumber }}</b>°
       </ion-col>
-      <ion-col text-center text-nowrap>
-        <b>{{ ros.joints[1] | edonumber }}</b>°
+      <ion-col text-center text-nowrap *ngIf="ros.joints.joints_mask % 4 >= 2">
+        <small>J2</small><br/>
+        <b>{{ ros.joints.joints[1].position | edonumber }}</b>°
       </ion-col>
-      <ion-col text-center text-nowrap>
-        <b>{{ ros.joints[2] | edonumber }}</b>°
+      <ion-col text-center text-nowrap *ngIf="ros.joints.joints_mask % 8 >= 4">
+        <small>J3</small><br/>
+        <b>{{ ros.joints.joints[2].position | edonumber }}</b>°
       </ion-col>
-      <ion-col text-center text-nowrap>
-        <b>{{ ros.joints[3] | edonumber }}</b>°
+      <ion-col text-center text-nowrap *ngIf="ros.joints.joints_mask % 16 >= 8">
+        <small>J4</small><br/>
+        <b>{{ ros.joints.joints[3].position | edonumber }}</b>°
       </ion-col>
-      <ion-col text-center text-nowrap>
-        <b>{{ ros.joints[4] | edonumber }}</b>°
+      <ion-col text-center text-nowrap *ngIf="ros.joints.joints_mask % 32 >= 16">
+        <small>J5</small><br/>
+        <b>{{ ros.joints.joints[4].position | edonumber }}</b>°
       </ion-col>
-      <ion-col text-center text-nowrap>
-        <b>{{ ros.joints[5] | edonumber }}</b>°
+      <ion-col text-center text-nowrap *ngIf="ros.joints.joints_mask % 64 >= 32">
+        <small>J6</small><br/>
+        <b>{{ ros.joints.joints[5].position | edonumber }}</b>°
+      </ion-col>
+      <ion-col text-center text-nowrap *ngIf="ros.joints.joints_mask % 128 >= 64">
+        <small>J7</small><br/>
+        <b>{{ ros.joints.joints[6].position | edonumber }}</b> mm
+      </ion-col>
+      <ion-col text-center text-nowrap *ngIf="ros.joints.joints_mask % 256 >= 128">
+        <small>J8</small><br/>
+        <b>{{ ros.joints.joints[7].position | edonumber }}</b>°
+      </ion-col>
+      <ion-col text-center text-nowrap *ngIf="ros.joints.joints_mask % 512 >= 256">
+        <small>J9</small><br/>
+        <b>{{ ros.joints.joints[8].position | edonumber }}</b>°
+      </ion-col>
+      <ion-col text-center text-nowrap *ngIf="ros.joints.joints_mask % 1024 >= 512">
+        <small>J10</small><br/>
+        <b>{{ ros.joints.joints[9].position | edonumber }}</b>°
       </ion-col>
     </ion-row>
   </ion-grid>

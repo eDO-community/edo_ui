@@ -41,7 +41,8 @@ export enum SettingsKeys {
   WS_SERVICE_PORT = "ws_service_port",
   WAYPOINTS = "waypoints",
   PLUGINS_ENABLED = "plugins_enabled",
-  LANGUAGE = "language"
+  LANGUAGE = "language",
+  TOOLS = "tools"
 }
 
 export const DEFAULT_LANGUAGE: string = "en";
@@ -140,6 +141,15 @@ export function uuidGenerator(): string {
 
 export function mod(n: number, m: number): number {
   return ((n % m) + m) % m;
+}
+
+export function parseFloatOrZero(value:string): number {
+  var result:number = parseFloat(value);
+  if (isNaN(result)){
+    return 0;
+  }else{
+    return result;
+  }
 }
 
 //FIXME: cache this value

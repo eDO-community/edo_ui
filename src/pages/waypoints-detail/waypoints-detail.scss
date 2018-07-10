@@ -118,6 +118,7 @@ page-waypoints-detail {
       display: flex;
       align-items: center;
       h2 {
+        word-break: break-all;
         font-size: 18px;
         color: color($colors, primary);
       }
@@ -163,6 +164,12 @@ page-waypoints-detail {
 
   .no-name-waypoint {
     color: #7c7f82;
+  }
+
+  .overflow-hidden {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 30px;
   }
 }
 

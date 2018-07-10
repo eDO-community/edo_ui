@@ -28,7 +28,7 @@
         </ion-item>
       </ion-card-header>
 
-      <div class="no-waypoints" *ngIf="waypointPaths == 0">
+      <div class="no-waypoints" *ngIf="waypointPaths == 0 && loaded == true">
         <img class="no-waypoints-big-image" src="assets/img/edo_nojoint.png" />
         <p><span translate>waypoints-create-first-waypoints</span></p>
         <img class="no-waypoints-small-image" src="assets/img/arrow-down.svg" />
@@ -41,6 +41,10 @@
             <p>{{ path.id }}</p>
           </ion-item>
           <ion-item-options side="right">
+            <button ion-button color="light" (click)="slidingItems.close(); itemClone(i, path); $event.stopPropagation();">
+               <ion-icon name="copy"></ion-icon>
+               <span translate>waypoints-detail-clone</span>
+            </button>
             <button ion-button color="light" (click)="slidingItems.close(); toggleSort(); $event.stopPropagation();">
               <ion-icon name="funnel"></ion-icon>
               <span translate>waypoints-detail-sort</span>
@@ -49,7 +53,7 @@
               <ion-icon name="trash"></ion-icon>
               <span translate>waypoint-delete</span>
             </button>
-          </ion-item-options>
+            </ion-item-options>
         </ion-item-sliding>
       </ion-list>
     </ion-card>

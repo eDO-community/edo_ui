@@ -38,6 +38,7 @@ import * as Utils from './../utils';
 
 import * as Ros from 'roslib';
 import { ServiceResponse } from 'roslib';
+import { ToolsService, Tool } from './tools.service';
 
 export enum CurrentState {
   DISCONNECTED = -2,
@@ -53,22 +54,59 @@ export enum CurrentState {
   COMMAND = 255 /* state machine busy keep previous state */
 }
 
-export type CartesianPose = {};
-
+export type CartesianPose = {
+  x:number,
+  y:number,
+  z:number,
+  a:number,
+  e:number,
+  r:number,
+  config_flags:string
+};
+export type Point = {
+  data_type: DestinationType,
+  cartesian_data:CartesianPose,
+  joints_mask: number,
+  joints_data: number[]
+}
+export type Frame = {
+  x:number,
+  y:number,
+  z:number,
+  a:number,
+  e:number,
+  r:number,
+}
 export type MachineState = {
   current_state: CurrentState;
   opcode: number;
 };
 export type MovementCommand = {
-  movement_type: MoveType,
-  size: number,
-  data: Array<number>,
-  movement_attributes: number[],
-  ovr: number
+  move_command: MoveCommand,
+  move_type: MoveType,
+  ovr: number,
+  delay: number,
+  cartesian_linear_speed: number,
+  target: Point,
+  via: Point,
+  tool: Frame | string,
+  frame: Frame,
+  remote_tool: number
 };
 export type JointCalibration = {
   joints_mask: number
 };
+export type JointControl = {
+  position:number,
+  velocity:number,
+  current:number,
+  ff_velocity:number,
+  ff_current:number
+}
+export type JointControlArray = {
+  size: number,
+  joints: JointControl[]
+}
 export type JointInit = {
   mode: number,
   joints_mask: number,
@@ -78,6 +116,16 @@ export type JointReset = {
   joints_mask: number,
   disengage_steps: number,
   disengage_offset: number
+}
+export type JointState = {
+  position: number,
+  velocity: number,
+  current: number,
+  commandFlag: number
+}
+export type JointStateArray = {
+  joints_mask: number,
+  joints: JointState[]
 }
 export type SystemCommand = {
   command: SystemCommandType,
@@ -99,22 +147,29 @@ export type NodeSwVersionArray = {
  * Movement type supported
  */
 export enum MoveType {
-  MOVE_TRJNT_J = 0, // Joint movements to joint point
-  MOVE_TRJNT_C = 1, // Joint movements to cartesian point
-  MOVE_CARLIN_J = 10, // Cartesian movement to joint point
-  MOVE_CARLIN_C = 11, // Cartesian movement to cartesian point
-  MOVE_CARCIR_J = 20, // Circular movement to joint point
-  MOVE_CARCIR_C = 21, // Circular movement to cartesian point
-  MOVE_PAUSE = 6, // Pause movement execution
-  MOVE_RESUME = 7, // Resume movement execution
-  MOVE_CANCEL = 8, // Cancel movement execution and empty robot queue
+  JOINT = 74, //'J'
+  LINEAR = 76, //'L',
+  CIRCULAR = 67, //'C'
+};
+
+export enum MoveCommand {
+  EXE_JOGMOVE = 74, // 'J'
+  EXE_MOVE = 77, // 'M'
+  PAUSE = 80, // 'P' Pause movement execution
+  RESUME = 82, // 'R' Resume movement execution
+  CANCEL_MOVE = 67, // 'C' Cancel movement execution and empty robot queue
+};
+
+export enum DestinationType {
+  JOINT = 74, //'J'
+  POSITION = 80, //'P'
+  XTNDPOS = 88, //'X'
 };
 
 /**
  * System commands & responses type
  */
 export enum SystemCommandType{
-
   // Get / set e.DO time as milliseconds since epoch
   SET_TIME=0,
   SET_TIME_RESPONSE=0,
@@ -298,11 +353,11 @@ export class RosService {
 
   public machineState:MachineState = {current_state: CurrentState.DISCONNECTED, opcode: 0};
 
-  public joints: Array<number> = [];
-  public readonly jointsChangeEvent = new Subject<Array<number>>();
+  public joints: JointStateArray = {joints_mask:0, joints:[]};
+  public readonly jointsChangeEvent = new Subject<JointStateArray>();
   public jointsLastUpdate: Date;
-  public jointsTarget: Array<number> = [];
-  public cartesianPosition: any = {};
+  public jointsTarget: JointControlArray = {size:0, joints:[]};
+  public cartesianPosition:CartesianPose = {x:0,y:0,z:0,a:0,e:0,r:0,config_flags:''};
   public readonly cartesianPositionChangeEvent = new Subject<any>();
   public cartesianPositionLastUpdate: Date;
   public readonly setJointIdStatusEvent = new Subject<SystemCommand>();
@@ -345,7 +400,7 @@ export class RosService {
   private connectTimeoutTimer:number;
 
   //FIXME: temporary to show errors
-  constructor(private toastCtrl: ToastController) {
+  constructor(private toastCtrl: ToastController, private toolsService:ToolsService) {
 
   }
 
@@ -404,10 +459,10 @@ export class RosService {
     this.waitingExecutedQueue.splice(0, this.waitingExecutedQueue.length);
     this.running = false;
     this.paused = false;
-    this.joints = [];
+    this.joints = {joints_mask:0, joints:[]};
     this.jointsLastUpdate = null;
-    this.jointsTarget = [];
-    this.cartesianPosition = {};
+    this.jointsTarget = {size:0, joints:[]};
+    this.cartesianPosition = {x:0,y:0,z:0,a:0,e:0,r:0,config_flags:''};
     this.cartesianPositionLastUpdate = null;
     if (this.machineState.current_state != CurrentState.DISCONNECTED || this.machineState.opcode != 0){
       this.machineState.current_state = CurrentState.DISCONNECTED;
@@ -486,7 +541,7 @@ export class RosService {
       throttle_rate: 200 // 0.1 seconds
     });
     this.topicJntState.subscribe(message => {
-      this.joints = message['joints'].map(joint => joint.position);
+      this.joints = <JointStateArray>message
       this.jointsLastUpdate = new Date();
       this.jointsChangeEvent.next(this.joints);
     });
@@ -498,7 +553,7 @@ export class RosService {
       throttle_rate: 200 // 0.1 seconds
     });
     this.topicJntTargetState.subscribe(message => {
-      this.jointsTarget = message['joints'].map(joint => joint.position);
+      this.jointsTarget = {size:0 /*FIXME */, joints:message['joints'].map(joint => joint.position)} ;
     });
 
     this.topicCartesianPose = new Ros.Topic({
@@ -508,7 +563,7 @@ export class RosService {
       throttle_rate: 200 // 0.1 seconds
     });
     this.topicCartesianPose.subscribe(message => {
-      this.cartesianPosition = message;
+      this.cartesianPosition = <CartesianPose>message;
       this.cartesianPositionLastUpdate = new Date();
       this.cartesianPositionChangeEvent.next(this.cartesianPosition);
     });
@@ -567,6 +622,15 @@ export class RosService {
             let waitingReceiveQueue : MovementCommandQueueItem = this.waitingReceiveQueue.shift();
             if (waitingReceiveQueue !== undefined){
               waitingReceiveQueue.status = MessageFeedback.COMMAND_RECEIVED;
+              //Allow to work on the simulator this should never happen on a real e.DO
+              if ((this.machineState.opcode & 65536) &&  this.pendingQueue.length > 0 && this.waitingExecutedQueue.length == 0) {
+                let pendingQueueItem : MovementCommandQueueItem = this.pendingQueue.shift();
+                if (pendingQueueItem !== undefined){
+                  this.waitingReceiveQueue.push(pendingQueueItem);
+                  this.waitingExecutedQueue.push(pendingQueueItem);
+                  this.sendMoveCommand(pendingQueueItem.message);
+                }
+              }
             }else{
               console.log("Unexpected ack 0");
             }
@@ -593,7 +657,7 @@ export class RosService {
                   this.waitingExecutedQueue.push(pendingQueueItem);
                   this.sendMoveCommand(pendingQueueItem.message);
                 }
-              }else if (waitingExecutedQueueItem.message.movement_type !== MoveType.MOVE_PAUSE) {
+              }else if (waitingExecutedQueueItem.message.move_command !== MoveCommand.PAUSE) {
                 if (this.waitingExecutedQueue.length == 0){// Ensure this is last real move and not an ack to a resume
                   this.running = false;
                 }
@@ -636,49 +700,78 @@ export class RosService {
     await this.clearQueue();
 
     if (this.machineState.current_state == CurrentState.DISCONNECTED) return;
-    let command: JointCalibration = {
-      joints_mask: 1 << joint
+
+    if (joint == null){
+      let command: JointCalibration = {
+        joints_mask: this.joints.joints_mask
+      }
+      this.topicJointCalibrationCommand.publish(command);
+    }else{
+      let command: JointCalibration = {
+        joints_mask: 1 << joint
+      }
+      this.topicJointCalibrationCommand.publish(command);
     }
-    this.topicJointCalibrationCommand.publish(command);
   }
 
   async sendResetCommand(){
     if (this.machineState.current_state == CurrentState.DISCONNECTED) return;
     let command: JointReset = {
-      joints_mask: (1 << this.joints.length) - 1,
+      joints_mask: this.joints.joints_mask,
       disengage_steps: 2000,
       disengage_offset: 3.5
     }
     this.topicJointResetCommand.publish(command);
   }
 
-  async sendInitCommand(joint:number) {
+  async sendInitCommand(joints_mask:number) {
     if (this.machineState.current_state == CurrentState.DISCONNECTED) return;
     let command: JointInit = {
       mode: 0,
-      joints_mask: (1 << joint) - 1,
+      joints_mask: joints_mask,
       reduction_factor: 0
     }
     this.topicJointInitCommand.publish(command);
   }
 
-  async sendJogCommand(moveType: MoveType, joints: Array<number>) {
+  async sendJogCommand(moveType: MoveType, target: Point, tool: string = '') {
     if (this.machineState.current_state != CurrentState.NOT_CALIBRATED){
       await this.clearQueue();
     }
 
     if (this.machineState.current_state == CurrentState.DISCONNECTED) return;
     let command: MovementCommand = {
-      movement_type: moveType,
-      data: joints,
-      size: joints.length,
-      movement_attributes: [0],
-      ovr: 0
+      move_command:MoveCommand.EXE_JOGMOVE,
+      move_type: moveType,
+      ovr: 100,
+      delay: 0,
+      cartesian_linear_speed: 0,
+      target: target,
+      via: {cartesian_data:{x:0,y:0,z:0,a:0,e:0,r:0,config_flags:''}, data_type: 0, joints_data:[], joints_mask:0},
+      tool: tool,
+      frame: {x:0,y:0,z:0,a:0,e:0,r:0},
+      remote_tool: 0
     }
+
+    await this.checkMoveCommand(command);
+
     this.topicJogCommand.publish(command);
   }
 
-  private sendMoveCommand(command: MovementCommand): void {
+  private async checkMoveCommand(command: MovementCommand):Promise<void>{
+    if (typeof command.tool == 'string'){
+      if (command.tool.length > 0){
+        let tool:Tool = await this.toolsService.loadTool(command.tool);
+        command.tool = tool.frame;
+      }else{
+        command.tool = {x:0, y:0, z:0, a:0, e:0, r:0};
+      }
+    }
+  }
+
+  private async sendMoveCommand(command: MovementCommand):Promise<void>{
+    await this.checkMoveCommand(command);
+
     this.topicMoveCommand.publish(command);
   }
 
@@ -698,18 +791,23 @@ export class RosService {
     });
   }
 
-  pushMoveCommand(command: MovementCommand, data:any): Promise<any> {
+  async pushMoveCommand(command: MovementCommand, data:any): Promise<any> {
     let rosQueueItem = new MovementCommandQueueItem(command, data);
 
     this.running = true;
 
     if (this.waitingExecutedQueue.length == 0 && this.waitingReceiveQueue.length == 0){
       let rosResetQueueItem = new MovementCommandQueueItem({
-        movement_type: MoveType.MOVE_CANCEL,
-        data: [],
-        size: 0,
-        movement_attributes: [255],
-        ovr: 0
+        move_command:MoveCommand.CANCEL_MOVE,
+        move_type: 0,
+        ovr: 0,
+        delay: 0,
+        cartesian_linear_speed: 0,
+        target: {cartesian_data:{x:0,y:0,z:0,a:0,e:0,r:0,config_flags:''}, data_type:0, joints_data:[], joints_mask:0},
+        via: {cartesian_data:{x:0,y:0,z:0,a:0,e:0,r:0,config_flags:''}, data_type:0, joints_data:[], joints_mask:0},
+        tool: {x:0,y:0,z:0,a:0,e:0,r:0},
+        frame: {x:0,y:0,z:0,a:0,e:0,r:0},
+        remote_tool: 0
       }, null);
       rosResetQueueItem.resolve = x => {};
       rosResetQueueItem.reject = x => {
@@ -719,7 +817,7 @@ export class RosService {
       this.waitingExecutedQueue.push(rosResetQueueItem);
       this.sendMoveCommand(rosResetQueueItem.message);
     }
-
+    await this.checkMoveCommand(rosQueueItem.message);
     this.pendingQueue.push(rosQueueItem);
 
     return new Promise<number>((resolve, reject) => {
@@ -731,11 +829,16 @@ export class RosService {
   pauseQueue(): Promise<any> {
     this.paused = true
     let rosQueueItem = new MovementCommandQueueItem({
-      movement_type: MoveType.MOVE_PAUSE,
-      data: [],
-      size: 0,
-      movement_attributes: [255],
-      ovr: 0
+      move_command:MoveCommand.PAUSE,
+      move_type: 0,
+      ovr: 0,
+      delay: 0,
+      cartesian_linear_speed: 0,
+      target: {cartesian_data:{x:0,y:0,z:0,a:0,e:0,r:0,config_flags:''}, data_type:0, joints_data:[], joints_mask:0},
+      via: {cartesian_data:{x:0,y:0,z:0,a:0,e:0,r:0,config_flags:''}, data_type:0, joints_data:[], joints_mask:0},
+      tool: {x:0,y:0,z:0,a:0,e:0,r:0},
+      frame: {x:0,y:0,z:0,a:0,e:0,r:0},
+      remote_tool: 0
     }, null);
 
     this.waitingReceiveQueue.unshift(rosQueueItem);
@@ -751,11 +854,16 @@ export class RosService {
   resumeQueue(): Promise<any> {
     this.paused = false
     let rosQueueItem = new MovementCommandQueueItem({
-      movement_type: MoveType.MOVE_RESUME,
-      data: [],
-      size: 0,
-      movement_attributes: [255],
-      ovr: 0
+      move_command:MoveCommand.RESUME,
+      move_type: 0,
+      ovr: 0,
+      delay: 0,
+      cartesian_linear_speed: 0,
+      target: {cartesian_data:{x:0,y:0,z:0,a:0,e:0,r:0,config_flags:''}, data_type:0, joints_data:[], joints_mask:0},
+      via: {cartesian_data:{x:0,y:0,z:0,a:0,e:0,r:0,config_flags:''}, data_type:0, joints_data:[], joints_mask:0},
+      tool: {x:0,y:0,z:0,a:0,e:0,r:0},
+      frame: {x:0,y:0,z:0,a:0,e:0,r:0},
+      remote_tool: 0
     }, null);
 
     this.waitingReceiveQueue.unshift(rosQueueItem);
@@ -773,11 +881,16 @@ export class RosService {
     this.pendingQueue.splice(0, this.pendingQueue.length);
     if (this.waitingExecutedQueue.length > 0 || this.waitingReceiveQueue.length > 0 || this.paused){
       let rosQueueCancelItem = new MovementCommandQueueItem({
-        movement_type: MoveType.MOVE_CANCEL,
-        data: [],
-        size: 0,
-        movement_attributes: [255],
-        ovr: 0
+        move_command:MoveCommand.CANCEL_MOVE,
+        move_type: 0,
+        ovr: 0,
+        delay: 0,
+        cartesian_linear_speed: 0,
+        target: {cartesian_data:{x:0,y:0,z:0,a:0,e:0,r:0,config_flags:''}, data_type:0, joints_data:[], joints_mask:0},
+        via: {cartesian_data:{x:0,y:0,z:0,a:0,e:0,r:0,config_flags:''}, data_type:0, joints_data:[], joints_mask:0},
+        tool: {x:0,y:0,z:0,a:0,e:0,r:0},
+        frame: {x:0,y:0,z:0,a:0,e:0,r:0},
+        remote_tool: 0
       }, null);
 
       this.sendMoveCommand(rosQueueCancelItem.message);
@@ -810,13 +923,5 @@ export class RosService {
 
   async sendControlSwitch(value:boolean){
     this.topicControlSwitch.publish({data:value});
-  }
-
-  convertFlagsToMovementAttribute(delay:number, flags:string):Array<number>{
-    var result:Array<number> = [delay];
-    for (let i = 0; i < flags.length; i++){
-      result.push(flags.charCodeAt(i) & 0xff);
-    }
-    return result;
   }
 }

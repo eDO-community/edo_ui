@@ -38,6 +38,7 @@ import { SettingsWiFiPage } from '../settings-wi-fi/settings-wi-fi';
 import { SettingsPluginsPage } from '../settings-plugins/settings-plugins';
 import { _, SettingsKeys, AVAILABLE_LANGUAGES, getPreferredLanguage } from '../../utils';
 import { RosService } from '../../services/index';
+import { SettingsToolsListPage } from '../settings-tools-list/settings-tools-list';
 
 @Component({
   selector: 'page-settings',
@@ -68,6 +69,10 @@ export class SettingsPage {
 
   private gotoPlugins():void{
     this.navCtrl.push(SettingsPluginsPage);
+  }
+
+  private gotoTools(){
+    this.navCtrl.push(SettingsToolsListPage)
   }
 
   private get languageStr():object{

@@ -103,10 +103,10 @@ page-calibration {
   }
 
   .calibration-steps {
-    max-width: 440px;
+    max-width: 580px;
     margin: 0 auto;
     @media only screen and (min-width: 1200px) {
-        max-width: 500px;
+        max-width: 680px;
     }
 
         .col {
@@ -122,7 +122,7 @@ page-calibration {
 
         button.button-outline,
         button.button-md-secondary {
-            width: 15%;
+            width: 12%;
             height: 40px;
         }
 

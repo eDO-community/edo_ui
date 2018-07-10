@@ -84,12 +84,24 @@
         </ion-row>
         <ion-row class="calibration-steps">
           <ion-col col-auto>
-            <button ion-button icon-right [outline]="!jointsCalibrated[0]" [color]="jointsCalibrated[0] ? 'secondary' : ''" (click)="onCalibrateStart(0)">J1<ion-icon [name]="jointsCalibrated[0] ? 'checkmark-circle' : 'radio-button-off'"></ion-icon></button>
-            <button ion-button icon-right [outline]="!jointsCalibrated[1]" [color]="jointsCalibrated[1] ? 'secondary' : ''" (click)="onCalibrateStart(1)">J2<ion-icon [name]="jointsCalibrated[1] ? 'checkmark-circle' : 'radio-button-off'"></ion-icon></button>
-            <button ion-button icon-right [outline]="!jointsCalibrated[2]" [color]="jointsCalibrated[2] ? 'secondary' : ''" (click)="onCalibrateStart(2)">J3<ion-icon [name]="jointsCalibrated[2] ? 'checkmark-circle' : 'radio-button-off'"></ion-icon></button>
-            <button ion-button icon-right [outline]="!jointsCalibrated[3]" [color]="jointsCalibrated[3] ? 'secondary' : ''" (click)="onCalibrateStart(3)">J4<ion-icon [name]="jointsCalibrated[3] ? 'checkmark-circle' : 'radio-button-off'"></ion-icon></button>
-            <button ion-button icon-right [outline]="!jointsCalibrated[4]" [color]="jointsCalibrated[4] ? 'secondary' : ''" (click)="onCalibrateStart(4)">J5<ion-icon [name]="jointsCalibrated[4] ? 'checkmark-circle' : 'radio-button-off'"></ion-icon></button>
-            <button ion-button icon-right [outline]="!jointsCalibrated[5]" [color]="jointsCalibrated[5] ? 'secondary' : ''" (click)="onCalibrateStart(5)">J6<ion-icon [name]="jointsCalibrated[5] ? 'checkmark-circle' : 'radio-button-off'"></ion-icon></button>
+            <button *ngIf="ros.joints.joints_mask % 2 >= 1" ion-button icon-right [outline]="!jointsCalibrated[0]" [color]="jointsCalibrated[0] ? 'secondary' : ''" (click)="onCalibrateStart(0)">J1<ion-icon [name]="jointsCalibrated[0] ? 'checkmark-circle' : 'radio-button-off'"></ion-icon></button>
+            <button *ngIf="ros.joints.joints_mask % 4 >= 2" ion-button icon-right [outline]="!jointsCalibrated[1]" [color]="jointsCalibrated[1] ? 'secondary' : ''" (click)="onCalibrateStart(1)">J2<ion-icon [name]="jointsCalibrated[1] ? 'checkmark-circle' : 'radio-button-off'"></ion-icon></button>
+            <button *ngIf="ros.joints.joints_mask % 8 >= 4" ion-button icon-right [outline]="!jointsCalibrated[2]" [color]="jointsCalibrated[2] ? 'secondary' : ''" (click)="onCalibrateStart(2)">J3<ion-icon [name]="jointsCalibrated[2] ? 'checkmark-circle' : 'radio-button-off'"></ion-icon></button>
+            <button *ngIf="ros.joints.joints_mask % 16 >= 8" ion-button icon-right [outline]="!jointsCalibrated[3]" [color]="jointsCalibrated[3] ? 'secondary' : ''" (click)="onCalibrateStart(3)">J4<ion-icon [name]="jointsCalibrated[3] ? 'checkmark-circle' : 'radio-button-off'"></ion-icon></button>
+            <button *ngIf="ros.joints.joints_mask % 32 >= 16" ion-button icon-right [outline]="!jointsCalibrated[4]" [color]="jointsCalibrated[4] ? 'secondary' : ''" (click)="onCalibrateStart(4)">J5<ion-icon [name]="jointsCalibrated[4] ? 'checkmark-circle' : 'radio-button-off'"></ion-icon></button>
+            <button *ngIf="ros.joints.joints_mask % 64 >= 32" ion-button icon-right [outline]="!jointsCalibrated[5]" [color]="jointsCalibrated[5] ? 'secondary' : ''" (click)="onCalibrateStart(5)">J6<ion-icon [name]="jointsCalibrated[5] ? 'checkmark-circle' : 'radio-button-off'"></ion-icon></button>
+            <button *ngIf="ros.joints.joints_mask % 128 >= 64" ion-button icon-right [outline]="!jointsCalibrated[6]" [color]="jointsCalibrated[6] ? 'secondary' : ''" (click)="onCalibrateStart(6)">J7<ion-icon [name]="jointsCalibrated[6] ? 'checkmark-circle' : 'radio-button-off'"></ion-icon></button>
+            <button *ngIf="ros.joints.joints_mask % 256 >= 128" ion-button icon-right [outline]="!jointsCalibrated[7]" [color]="jointsCalibrated[7] ? 'secondary' : ''" (click)="onCalibrateStart(7)">J8<ion-icon [name]="jointsCalibrated[7] ? 'checkmark-circle' : 'radio-button-off'"></ion-icon></button>
+            <button *ngIf="ros.joints.joints_mask % 512 >= 256" ion-button icon-right [outline]="!jointsCalibrated[8]" [color]="jointsCalibrated[8] ? 'secondary' : ''" (click)="onCalibrateStart(8)">J9<ion-icon [name]="jointsCalibrated[8] ? 'checkmark-circle' : 'radio-button-off'"></ion-icon></button>
+            <button *ngIf="ros.joints.joints_mask % 1024 >= 512" ion-button icon-right [outline]="!jointsCalibrated[9]" [color]="jointsCalibrated[9] ? 'secondary' : ''" (click)="onCalibrateStart(9)">J10<ion-icon [name]="jointsCalibrated[9] ? 'checkmark-circle' : 'radio-button-off'"></ion-icon></button>
+          </ion-col>
+        </ion-row>
+        <ion-row class="calibration-joint-buttons" justify-content-center>
+          <ion-col col-auto>
+            <button ion-button icon-right color="secondary" (click)="onCalibrateAll()">
+              <span translate>calibration-calibrate-all-joints</span>
+              <ion-icon name="checkmark"></ion-icon>
+            </button>
           </ion-col>
         </ion-row>
       </ion-col>
@@ -108,7 +120,7 @@
         <ion-col align-self-center class="joint-buttons">
           <ion-row class="calibration-steps">
             <ion-col>
-              <h2><span translate>calibration-current-axis</span> J{{currentJoint + 1}} {{ros.joints[currentJoint] | edonumber }}</h2>
+              <h2><span translate>calibration-current-axis</span> J{{currentJoint + 1}} {{ros.joints.joints[currentJoint].position | edonumber }}</h2>
             </ion-col>
           </ion-row>
           <ion-row class="calibration-steps">

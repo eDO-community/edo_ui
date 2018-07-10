@@ -51,7 +51,7 @@ export class PluginService {
   private embeddedPlugins:any[] = [
   ];
   private plugins:any = {};
-  private menuItems:any = {};
+  private menuItems:any[] = [];
 
   constructor(private compiler: Compiler,
     private componentFactoryResolver: ComponentFactoryResolver, private moduleLoader:ModuleLoader,
@@ -170,11 +170,11 @@ export class PluginService {
     pluginComponentFactories.forEach(pluginComponentFactory => {
       this.moduleLoader._cfrMap.set(pluginComponentFactory.componentType, ref.componentFactoryResolver);
       if (pluginComponentFactory.componentType.prototype.EDOShowInMenu){
-        this.menuItems[pluginComponentFactory.selector] = {
+        this.menuItems.push({ // [pluginComponentFactory.selector]
           title: pluginComponentFactory.componentType.prototype.EDOShowInMenu.title,
           componentType: pluginComponentFactory.componentType,
           icon: pluginComponentFactory.componentType.prototype.EDOShowInMenu.icon
-        };
+        });
       }
     });
   }

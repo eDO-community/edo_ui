@@ -4,6 +4,7 @@
 </button>
 
 <ion-content>
+
   <ion-grid [hidden]="!initializing">
     <ion-row justify-content-center align-items-center>
       <ion-col col-auto>
@@ -16,35 +17,40 @@
   </ion-grid>
 
   <ion-grid [hidden]="initializing">
-    <ion-row align-items-center justify-content-center>
-      <ion-col align-self-center text-center>
-        <img src="assets/img/edo-4-axes.png" />
-        <button class="configuration-large-btn" ion-button (click)="initialize(4)">Configura E.Do a 4 assi</button>
-      </ion-col>
-      <ion-col class="configuration-separator">
-        <div class="configuration-separator-line"></div>
-      </ion-col>
-      <ion-col align-self-center text-center>
-        <img src="assets/img/edo-6-axes.png" />
-        <button class="configuration-large-btn" ion-button (click)="initialize(6)">Configura E.Do a 6 assi</button>
-      </ion-col>
-    </ion-row>
+    <ion-grid>
+      <ion-row align-items-center justify-content-center>
+        <ion-col align-self-center text-center>
+          <img src="assets/img/edo-configuration.png" />
+        </ion-col>
+        <ion-col align-self-center text-center>
+          <div class="configuration-select-model">
+            <h3 translate>configuration-title</h3>
+            <p translate>configuration-description</p>
+            <ion-item>
+              <ion-label>
+                <span translate>configuration-axis-number</span>
+              </ion-label>
+              <ion-select [(ngModel)]="axisNumber">
+                <ion-option value="6" translate>configuration-6-axis</ion-option>
+                <!-- <ion-option value="4" translate>configuration-4-axis</ion-option> -->
+              </ion-select>
+            </ion-item>
+            <ion-item>
+              <ion-label>
+                <span translate>configuration-gripper</span>
+              </ion-label>
+              <ion-select [(ngModel)]="gripper">
+                <ion-option value="false" translate>configuration-without-gripper</ion-option>
+                <ion-option value="true" translate>configuration-with-gripper</ion-option>
+              </ion-select>
+            </ion-item>
+            <button class="configuration-large-btn" ion-button full (click)="initialize(6)">
+              <span translate>configuration-start</span>
+            </button>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
   </ion-grid>
-
-<!-- <ion-grid>
-    <ion-row align-items-center justify-content-center>
-      <ion-col align-self-center text-center>
-        <img src="assets/img/edo-no-gripper.png" />
-        <button class="configuration-large-btn" ion-button>Configura E.Do con pinza</button>
-      </ion-col>
-      <ion-col class="configuration-separator">
-        <div class="configuration-separator-line"></div>
-      </ion-col>
-      <ion-col align-self-center text-center>
-        <img src="assets/img/edo-no-gripper.png" />
-        <button class="configuration-large-btn" ion-button (click)="showConfirm()">Configura E.Do senza pinza</button>
-      </ion-col>
-    </ion-row>
-  </ion-grid> -->
 
 </ion-content>

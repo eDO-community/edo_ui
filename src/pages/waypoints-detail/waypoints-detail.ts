@@ -30,8 +30,8 @@
 
 import { Component, ViewChild, QueryList, ViewChildren } from '@angular/core';
 import { JoystickComponent } from '../../components/joystick/joystick';
-import { NavController, NavParams, AlertController, ModalController, PopoverController, ViewController } from 'ionic-angular';
-import { RosService, MovementCommand, MoveType, WaypointsService, WaypointPath, Waypoint } from '../../services';
+import { NavController, NavParams, AlertController, ModalController, PopoverController, ViewController, ToastController } from 'ionic-angular';
+import { RosService, MovementCommand, MoveType, WaypointsService, WaypointPath, Waypoint, Point } from '../../services';
 import { WaypointsEditorPage } from '../waypoints-editor/waypoints-editor';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -44,33 +44,47 @@ import { _ } from '../../utils';
   providers: [WaypointsService]
 })
 export class WaypointsDetailPage {
+  private map: any;
+
   private path: WaypointPath;
 
-  private sorting:boolean = false;
+  private sorting: boolean = false;
 
-  private loopCount:number = 0;
+  private loopCount: number = 0;
 
-  private loopRemaining:number = 0;
+  private loopRemaining: number = 0;
 
-  private speed:number = 100;
+  private speed: number = 100;
 
   private currentElement: number = -1;
 
   @ViewChildren('slidingItems') private slidingItems: QueryList<any>;
 
-  private movementTypes = {
-    0: _('joint-move-on-joints'),
-    1: _('joint-move-on-coords'),
-    10: _('cart-move-on-joints'),
-    11: _('cart-move-on-coords'),
-    20: _('circ-move-on-joints'),
-    21: _('circ-move-on-coords')
-  }
 
   constructor(private navCtrl: NavController, private navParams: NavParams,
     private alertCtrl: AlertController, private translateService: TranslateService,
     private modalCtrl: ModalController, private popoverCtrl: PopoverController,
-    private service: WaypointsService, private ros: RosService) {
+    private service: WaypointsService, private ros: RosService,
+    public toastCtrl: ToastController) {
+
+    this.map = {
+      74: {
+        74: 'joint-move-on-joints',
+        80: 'joint-move-on-coords',
+        88: 'joint-move-on-coords'
+      },
+      76: {
+        74: 'cart-move-on-joints',
+        80: 'cart-move-on-coords',
+        88: 'cart-move-on-coords'
+      },
+      67: {
+        74: 'circ-move-on-joints',
+        80: 'circ-move-on-coords',
+        88: 'circ-move-on-coords'
+      }
+    };
+
     this.path = <WaypointPath>navParams.get('path');
 
     if (typeof this.path === 'undefined') {
@@ -87,7 +101,7 @@ export class WaypointsDetailPage {
 
   private itemDelete(id, item) {
     this.closeAllItems();
-    if (this.currentElement < 0){
+    if (this.currentElement < 0) {
       let confirm = this.alertCtrl.create({
         title: this.translateService.instant('waypoints-detail-delete-title'),
         message: this.translateService.instant('waypoints-detail-delete-description') + ` ${item.name}`,
@@ -97,8 +111,7 @@ export class WaypointsDetailPage {
             text: this.translateService.instant('waypoints-detail-agree'),
             handler: () => {
               let result = this.path.removeWaypoint(id);
-              this.saveCurrentWaypath();
-              // TODO: show a toast indicating the success or the failure
+              this.saveCurrentWaypath(true);
             }
           }
         ],
@@ -108,16 +121,16 @@ export class WaypointsDetailPage {
     }
   }
 
-  private itemClone(id, item) {
+  private itemClone(id: number, item: Waypoint) {
     this.closeAllItems();
-    if (this.currentElement < 0){
+    if (this.currentElement < 0) {
       let confirm = this.alertCtrl.create({
         title: this.translateService.instant('waypoints-detail-clone-title'),
         message: this.translateService.instant('waypoints-detail-clone-description') + ` ${item.name}`,
         inputs: [
           {
             name: 'name',
-            placeholder: 'Name',
+            placeholder: this.translateService.instant("waypoints-detail-name"),
             value: item.name
           }
         ],
@@ -126,9 +139,9 @@ export class WaypointsDetailPage {
           {
             text: this.translateService.instant('waypoints-detail-agree'),
             handler: data => {
-              let result = this.path.addWaypoint(data.name, item.command.data, item.command.movement_type, item.command.movement_attributes[0], item.command.ovr, id + 1);
-              this.saveCurrentWaypath();
-              // TODO: show a toast indicating the success or the failure
+              var target: Point = item.command.target
+              let result = this.path.addWaypoint(target, <any>item.command.tool, data.name, item.command.move_type, item.command.delay, item.command.ovr, id + 1);
+              this.saveCurrentWaypath(true);
             }
           }
         ],
@@ -149,22 +162,22 @@ export class WaypointsDetailPage {
         label: this.translateService.instant(_('waypoints-detail-loop-setting-no-loop')),
         value: '0',
         checked: this.loopCount == 0
-      },{
+      }, {
         type: 'radio',
         label: this.translateService.instant(_('waypoints-detail-loop-setting-loop')),
         value: '-1',
         checked: this.loopCount == -1
-      },{
+      }, {
         type: 'radio',
         label: '5 ' + this.translateService.instant(_('waypoints-detail-loop-setting-times')),
         value: '5',
         checked: this.loopCount == 5
-      },{
+      }, {
         type: 'radio',
         label: '10 ' + this.translateService.instant(_('waypoints-detail-loop-setting-times')),
         value: '10',
         checked: this.loopCount == 10
-      },{
+      }, {
         type: 'radio',
         label: '50 ' + this.translateService.instant(_('waypoints-detail-loop-setting-times')),
         value: '50',
@@ -172,8 +185,8 @@ export class WaypointsDetailPage {
       }],
       buttons: [{
         text: this.translateService.instant(_('settings-cancel')),
-        handler: (data: any) => {}
-      },{
+        handler: (data: any) => { }
+      }, {
         text: this.translateService.instant(_('settings-ok')),
         handler: (data: any) => {
           this.loopCount = parseInt(data);
@@ -186,34 +199,42 @@ export class WaypointsDetailPage {
     alert.present();
   }
 
-  private async runClicked(event) {
+  private async runClicked(event, isLoop: boolean) {
     this.closeAllItems();
-    if (this.currentElement < 0){
-      await this.ros.clearQueue();
+    if (this.currentElement < 0 || isLoop) {
+      if (!isLoop){
+        await this.ros.clearQueue();
+        this.currentElement = 0;
+      }
 
       this.path.waypoints.forEach((waypoint, index) => {
-        let command:MovementCommand = <MovementCommand>Utils.cloneObject(waypoint.command);
+        let command: MovementCommand = <MovementCommand>Utils.cloneObject(waypoint.command);
         command.ovr = command.ovr * this.speed / 100;
         this.ros.pushMoveCommand(command, index).then(completedId => {
-          if (this.currentElement == this.path.waypoints.length - 1){
-            this.currentElement = -1;
-            if (this.loopCount < 0){
-              this.runClicked(null);
-            }else if (this.loopRemaining > 0){
+          if (this.currentElement == this.path.waypoints.length - 1) {
+            if (this.loopCount < 0) {
+              this.runClicked(null, true);
+            } else if (this.loopRemaining > 0) {
               this.loopRemaining--;
-              this.runClicked(null);
-            }else{
+              this.runClicked(null, true);
+            } else {
               this.loopRemaining = this.loopCount;
             }
-          }else{
+          }
+
+          if (this.currentElement == this.path.waypoints.length - 1) {
+            if (this.loopRemaining != 0){
+              this.currentElement = 0;
+            }else{
+              this.currentElement = -1;
+            }
+          } else {
             this.currentElement = completedId + 1;
           }
         }).catch(error => {
           this.currentElement = -1;
         });
       });
-
-      this.currentElement = 0;
     }
   }
 
@@ -226,11 +247,11 @@ export class WaypointsDetailPage {
 
   private itemSelected(i, waypoint) {
     this.closeAllItems();
-    if (this.currentElement < 0){
-      let waypointsEditor = this.modalCtrl.create(WaypointsEditorPage, {path: this.path, waypoint: waypoint}, {cssClass:'modal-waypoints-editor'});
+    if (this.currentElement < 0) {
+      let waypointsEditor = this.modalCtrl.create(WaypointsEditorPage, { path: this.path, waypoint: waypoint }, { cssClass: 'modal-waypoints-editor' });
       waypointsEditor.onDidDismiss(data => {
-        if(data && data.save){
-          this.saveCurrentWaypath();
+        if (data && data.save) {
+          this.saveCurrentWaypath(true);
         }
       });
       waypointsEditor.present();
@@ -239,11 +260,11 @@ export class WaypointsDetailPage {
 
   private itemCreate() {
     this.closeAllItems();
-    if (this.currentElement < 0){
-      let waypointsEditor = this.modalCtrl.create(WaypointsEditorPage, {path: this.path}, {cssClass:'modal-waypoints-editor'});
+    if (this.currentElement < 0) {
+      let waypointsEditor = this.modalCtrl.create(WaypointsEditorPage, { path: this.path }, { cssClass: 'modal-waypoints-editor' });
       waypointsEditor.onDidDismiss(data => {
-        if(data && data.save){
-          this.saveCurrentWaypath();
+        if (data && data.save) {
+          this.saveCurrentWaypath(true);
         }
       });
       waypointsEditor.present();
@@ -252,23 +273,37 @@ export class WaypointsDetailPage {
 
   private async waypointClicked(id, waypoint: Waypoint) {
     await this.ros.clearQueue();
-    let singleMoveCommand:MovementCommand = <MovementCommand>Utils.cloneObject(waypoint.command);
-    singleMoveCommand.movement_type = MoveType.MOVE_TRJNT_J;
+    let singleMoveCommand: MovementCommand = <MovementCommand>Utils.cloneObject(waypoint.command);
+    singleMoveCommand.move_type = MoveType.JOINT;
     singleMoveCommand.ovr = this.speed;
     this.ros.pushMoveCommand(singleMoveCommand, null);
   }
 
-  private async saveCurrentWaypath() {
-    this.path = await this.service.save(this.path);
+  private async saveCurrentWaypath(createToast?: boolean) {
+    try {
+      this.path = await this.service.save(this.path);
+      if(createToast)
+        this.toastCtrl.create({
+          message: this.translateService.instant(('waypoints-detail-action-complete')),
+          duration: 3000,
+          position: 'bottom'
+        }).present();
+    } catch (e) {
+      this.toastCtrl.create({
+        message: this.translateService.instant(('waypoints-detail-action-error')),
+        duration: 3000,
+        position: 'bottom'
+      }).present();
+    }
   }
 
-  private itemReorder(event:any){
+  private itemReorder(event: any) {
     this.path.reorder(event);
 
     this.saveCurrentWaypath();
   }
 
-  private onEditName():void{
+  private onEditName(): void {
     let alert = this.alertCtrl.create({
       title: this.translateService.instant(_('waypoints-detail-edit-name-title')),
       inputs: [
@@ -280,14 +315,14 @@ export class WaypointsDetailPage {
       ],
       buttons: [
         {
-          text:  this.translateService.instant(_('waypoints-detail-cancel')),
+          text: this.translateService.instant(_('waypoints-detail-cancel')),
           role: 'cancel'
         },
         {
           text: this.translateService.instant(_('waypoints-detail-save')),
           handler: data => {
             this.path.name = data.name;
-            this.saveCurrentWaypath();
+            this.saveCurrentWaypath(true);
           }
         }
       ],
@@ -296,17 +331,17 @@ export class WaypointsDetailPage {
     alert.present();
   }
 
-  public toggleSort(){
+  public toggleSort() {
     this.sorting = !this.sorting;
   }
 
-  private canSlide(event:any, item:any){
+  private canSlide(event: any, item: any) {
     if (this.sorting || this.currentElement >= 0) {
       event.close();
     }
   }
 
-  private closeAllItems(){
-    this.slidingItems.forEach((item) => {item.close();});
+  private closeAllItems() {
+    this.slidingItems.forEach((item) => { item.close(); });
   }
 }

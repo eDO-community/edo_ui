@@ -30,8 +30,9 @@
 
 import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import * as Utils from '../../utils';
-import { RosService, MovementCommand, MoveType } from "../../services";
+import { RosService, MovementCommand, MoveType, JointState, CartesianPose, MoveCommand, Point, DestinationType } from "../../services";
 import { Subscription } from 'rxjs/Subscription';
+import { Vibration } from '@ionic-native/vibration';
 
 export enum JoystickMode{
   CARTESIAN=0,
@@ -48,10 +49,10 @@ export enum JoystickMode{
 export class JoystickComponent {
   private JoystickMode = JoystickMode;
 
-  private inputCartesian: any;
+  private indexToVariable:Array<string> = ['x','y','z','a','e','r'];
+  private inputCartesian: Array<string>;
   private inputJoints: Array<string>;
   private inputActiveIndex: number = 0;
-  private inputActiveKey: string = 'x';
 
   private cartesian: Array<number>;
   private joints: Array<number>;
@@ -83,11 +84,13 @@ export class JoystickComponent {
 
   private jointsChangeEventSubscription:Subscription;
 
-  constructor(private ros: RosService, private ref: ChangeDetectorRef) {
+  constructor(private ros: RosService,
+    private ref: ChangeDetectorRef,
+    private vibration: Vibration) {
     this.cartesian = new Array(6).fill(0);
-    this.joints = new Array(6).fill(0);
-    this.inputCartesian = {x:"0",y:"0",z:"0",a:"0",e:"0",r:"0"};
-    this.inputJoints = new Array(6).fill("0");
+    this.joints = new Array(10).fill(0);
+    this.inputCartesian = new Array(6).fill("0");
+    this.inputJoints = new Array(10).fill("0");
     this.jointsChangeEventSubscription = this.ros.jointsChangeEvent.subscribe((_) => {
       this.ref.markForCheck();
     });
@@ -102,7 +105,20 @@ export class JoystickComponent {
     this.cartesian[axis] = value * this.speed / 100;
 
     if (value !== 0){
-      this.ros.sendJogCommand(MoveType.MOVE_TRJNT_C, this.cartesian);
+      this.ros.sendJogCommand(MoveType.LINEAR, {
+        data_type: DestinationType.POSITION,
+        cartesian_data: {
+          x: this.cartesian[0],
+          y: this.cartesian[1],
+          z: this.cartesian[2],
+          a: this.cartesian[3],
+          e: this.cartesian[4],
+          r: this.cartesian[5],
+          config_flags: ""
+        },
+        joints_data: [],
+        joints_mask: 127 //this.ros.joints.joints_mask //FIXME: should we send the right mask here ?
+      });
     }
   }
 
@@ -110,48 +126,102 @@ export class JoystickComponent {
     this.joints[joint] = value * this.speed / 100;
 
     if (value !== 0){
-      this.ros.sendJogCommand(MoveType.MOVE_TRJNT_J, this.joints);
+      this.ros.sendJogCommand(MoveType.JOINT, {
+        data_type: DestinationType.JOINT,
+        cartesian_data: {x:0,y:0,z:0,a:0,e:0,r:0,config_flags:''},
+        joints_data: this.joints,
+        joints_mask: 127 //this.ros.joints.joints_mask //FIXME: should we send the right mask here ?
+      });
     }
   }
 
-  private onInputGo(event) {
+
+  private onXTNDPosJointsValueChange(joint, value) {
+    this.joints[joint] = value * this.speed / 100;
+
+    if (value !== 0){
+      this.ros.sendJogCommand(MoveType.LINEAR, {
+        data_type: DestinationType.XTNDPOS,
+        cartesian_data: {x:0,y:0,z:0,a:0,e:0,r:0,config_flags:''},
+        joints_data: this.joints,
+        joints_mask: 127 //this.ros.joints.joints_mask //FIXME: should we send the right mask here ?
+      });
+    }
+  }
+
+  private async onInputGo(event) {
     if (this.mode == JoystickMode.INPUT_JOINTS){
-      let joints = this.inputJoints.map((v:string)=> parseFloat(v));
-      let moveComm: MovementCommand = {
-        size: 6,
-        data: joints,
-        movement_attributes: [],
-        movement_type: MoveType.MOVE_TRJNT_J,
-        ovr: this.speed
+      let movementCommand: MovementCommand = {
+        move_command: MoveCommand.EXE_MOVE,
+        move_type: MoveType.JOINT,
+        ovr: this.speed,
+        delay: 0,
+        cartesian_linear_speed: 0,
+        target: {
+          data_type: DestinationType.JOINT,
+          cartesian_data: {x:0,y:0,z:0,a:0,e:0,r:0,config_flags:''},
+          joints_data: this.inputJoints.map((v:string)=> Utils.parseFloatOrZero(v)),
+          joints_mask: this.ros.joints.joints_mask //FIXME: solo giutno da muovere
+        },
+        via: {cartesian_data:{x:0,y:0,z:0,a:0,e:0,r:0,config_flags:''}, data_type:0, joints_data:[], joints_mask:0},
+        tool: {x:0,y:0,z:0,a:0,e:0,r:0},
+        frame: {x:0,y:0,z:0,a:0,e:0,r:0},
+        remote_tool: 0
       }
-      this.ros.pushMoveCommand(moveComm, null).catch(x => {});
+      await this.ros.pushMoveCommand(movementCommand, null).catch(x => {});
     }else if (this.mode == JoystickMode.INPUT_CARTESIAN){
-      let cartesian = [parseFloat(this.inputCartesian.x),
-        parseFloat(this.inputCartesian.y),
-        parseFloat(this.inputCartesian.z),
-        parseFloat(this.inputCartesian.a),
-        parseFloat(this.inputCartesian.e),
-        parseFloat(this.inputCartesian.r)]
-      let moveComm: MovementCommand = {
-        size: 6,
-        data: cartesian,
-        movement_attributes: this.ros.convertFlagsToMovementAttribute(0, this.inputCartesian.config_flags),
-        movement_type: MoveType.MOVE_TRJNT_C,
-        ovr: this.speed
+      let movementCommand: MovementCommand = {
+        move_command: MoveCommand.EXE_MOVE,
+        move_type: MoveType.LINEAR,
+        ovr: this.speed,
+        delay: 0,
+        cartesian_linear_speed: 0,
+        target: {
+          data_type: DestinationType.XTNDPOS,
+          cartesian_data: {
+            x: Utils.parseFloatOrZero(this.inputCartesian[0]),
+            y: Utils.parseFloatOrZero(this.inputCartesian[1]),
+            z: Utils.parseFloatOrZero(this.inputCartesian[2]),
+            a: Utils.parseFloatOrZero(this.inputCartesian[3]),
+            e: Utils.parseFloatOrZero(this.inputCartesian[4]),
+            r: Utils.parseFloatOrZero(this.inputCartesian[5]),
+            config_flags: this.ros.cartesianPosition.config_flags
+          },
+          joints_data: [0,0,0,0,0,0, Utils.parseFloatOrZero(this.inputJoints[6]),Utils.parseFloatOrZero(this.inputJoints[7]),Utils.parseFloatOrZero(this.inputJoints[8]),Utils.parseFloatOrZero(this.inputJoints[9])],
+          joints_mask: this.ros.joints.joints_mask //FIXME: should we send the right mask here ?
+        },
+        via: {cartesian_data:{x:0,y:0,z:0,a:0,e:0,r:0,config_flags:''}, data_type:0, joints_data:[], joints_mask:0},
+        tool: {x:0,y:0,z:0,a:0,e:0,r:0},
+        frame: {x:0,y:0,z:0,a:0,e:0,r:0},
+        remote_tool: 0
       }
-      this.ros.pushMoveCommand(moveComm, null).catch(x => {});
+      await this.ros.pushMoveCommand(movementCommand, null).catch(x => {});
     }
+
+    this.vibration.vibrate(100);
   }
 
-  private onReset(event) {
-    let moveComm: MovementCommand = {
-      size: 6,
-      data: [0, 0, 0, 0, 0, 0],
-      movement_attributes: [],
-      movement_type: MoveType.MOVE_TRJNT_J,
-      ovr: this.speed
+  private async onReset(event) {
+    let movementCommand: MovementCommand = {
+      move_command: MoveCommand.EXE_MOVE,
+      move_type: MoveType.JOINT,
+      ovr: this.speed,
+      delay: 0,
+      cartesian_linear_speed: 0,
+      target: {
+        data_type: DestinationType.JOINT,
+        cartesian_data: {x:0,y:0,z:0,a:0,e:0,r:0,config_flags:''},
+        joints_data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        joints_mask: this.ros.joints.joints_mask //FIXME: should we send the right mask here ?
+      },
+      via: {cartesian_data:{x:0,y:0,z:0,a:0,e:0,r:0,config_flags:''}, data_type:0, joints_data:[], joints_mask:0},
+      tool: {x:0,y:0,z:0,a:0,e:0,r:0},
+      frame: {x:0,y:0,z:0,a:0,e:0,r:0},
+      remote_tool: 0
     }
-    this.ros.pushMoveCommand(moveComm, null);
+    await this.ros.pushMoveCommand(movementCommand, null);
+
+    this.vibration.vibrate(100);
   }
 
   private onStop(event) {
@@ -166,12 +236,30 @@ export class JoystickComponent {
   private onMapSwipe(event) {
     switch (event.direction) {
       case 2: // INPUT_MOVE = 2;
-        this.currentJoint = Utils.mod(this.currentJoint + 1, this.joints.length);
+        this.setCurrentJoint(this.currentJoint + 1, true);
         break;
       case 4:
-        this.currentJoint = Utils.mod(this.currentJoint - 1, this.joints.length);
+        this.setCurrentJoint(this.currentJoint - 1, false);
         break;
     }
+  }
+
+  private setCurrentJoint(joint:number, increase:boolean){
+      if ((this.ros.joints.joints_mask & (1 << joint)) > 0 && joint<6){
+        this.currentJoint = joint;
+      }else if (increase){
+        if (joint < 5){
+          this.setCurrentJoint(joint + 1, increase);
+        }else{
+          this.setCurrentJoint(0, increase);
+        }
+      }else{
+        if (joint > 0){
+          this.setCurrentJoint(joint - 1, increase);
+        }else{
+          this.setCurrentJoint(5, increase);
+        }
+      }
   }
 
   /**
@@ -185,22 +273,20 @@ export class JoystickComponent {
 
   private onSwitchInput(mode:JoystickMode){
     this.mode = mode;
-    this.inputCartesian = Object.keys(this.ros.cartesianPosition).reduce((result, key) => {
-      if (typeof this.ros.cartesianPosition[key] === 'number'){
-        result[key] = this.ros.cartesianPosition[key].toFixed(2);
-      }else{
-        result[key] = this.ros.cartesianPosition[key];
-      }
-      return result;
-    }, {});
-    this.inputJoints = this.ros.joints.map((v:number)=>v.toFixed(2));
+    this.inputCartesian = [this.ros.cartesianPosition.x.toFixed(2),
+      this.ros.cartesianPosition.y.toFixed(2),
+      this.ros.cartesianPosition.z.toFixed(2),
+      this.ros.cartesianPosition.a.toFixed(2),
+      this.ros.cartesianPosition.e.toFixed(2),
+      this.ros.cartesianPosition.r.toFixed(2)];
+    this.inputJoints = this.ros.joints.joints.map((joint:JointState)=>joint.position.toFixed(2));
   }
 
   private onKeypadInputChange(value:string){
-    if (this.mode == JoystickMode.INPUT_JOINTS){
+    if (this.mode == JoystickMode.INPUT_JOINTS || this.inputActiveIndex >= 6){
       this.inputJoints[this.inputActiveIndex] = value;
     }else{
-      this.inputCartesian[this.inputActiveKey] = value;
+      this.inputCartesian[this.inputActiveIndex] = value;
     }
   }
 }

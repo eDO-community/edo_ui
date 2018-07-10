@@ -44,6 +44,9 @@ import { ConfigurationBoardPage } from '../configuration-board/configuration-boa
 export class ConfigurationPage {
   private initializing: boolean = false;
 
+  private axisNumber:string = "6";
+  private gripper:string = "true";
+
   private currentStateChangeEventSubscription:Subscription;
   private machineStateTimeoutTimer:number;
 
@@ -74,10 +77,11 @@ export class ConfigurationPage {
     this.currentStateChangeEventSubscription.unsubscribe();
   }
 
-  initialize(axis:number) {
+  initialize() {
     let confirm = this.alertCtrl.create({
       title: this.translateService.instant(_('configuration-confirm-configuration')),
-      message: this.translateService.instant(_('configuration-proceed-configuration')) + axis + this.translateService.instant(_('configuration-axis')),
+      message: this.translateService.instant(_('configuration-proceed-configuration')) + this.axisNumber + this.translateService.instant(_('configuration-axis')) +
+                ((this.gripper=="true")? this.translateService.instant(_('configuration-with-gripper')) :  this.translateService.instant(_('configuration-without-gripper'))) + "?",
       buttons: [
         {
           text: this.translateService.instant(_('settings-cancel')),
@@ -86,20 +90,20 @@ export class ConfigurationPage {
           }
         },
         {
-          text: 'Procedi',
+          text: this.translateService.instant(_('settings-proceed')),
           handler: () => {
             this.initializing = true;
             this.machineStateTimeoutTimer = window.setTimeout(() => {
               this.initializing = false;
               this.toastCtrl.create({
                 message: this.translateService.instant(_('no-machine-state-after-connect')),
-                duration: 90000,
+                duration: 10000,
                 position: 'middle'
               }).present();
 
               this.rosService.disconnect();
             }, 90000);
-            this.rosService.sendInitCommand(axis);
+            this.rosService.sendInitCommand(((parseInt(this.axisNumber) == 6) ? 63 : 23) + ((this.gripper == "true") ? 64 : 0));
           }
         }
       ],

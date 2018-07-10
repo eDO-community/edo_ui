@@ -61,6 +61,7 @@ import { ConfigurationBoardGuideComponent } from '../components/configuration-bo
 import { EDOUnlockModalComponent } from '../components/edo-unlock-modal/edo-unlock-modal';
 import { PluginService } from '../services';
 import { SettingsPluginsPage } from '../pages/settings-plugins/settings-plugins';
+import { SettingsToolsListPage } from '../pages/settings-tools-list/settings-tools-list';
 
 export function createTranslateLoader(http: Http) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -80,6 +81,7 @@ export function createTranslateLoader(http: Http) {
     WaypointsListPage,
     WaypointsDetailPage,
     WaypointsEditorPage,
+    SettingsToolsListPage,
     SettingsPage,
     SettingsLanPage,
     SettingsWiFiPage,
@@ -113,6 +115,7 @@ export function createTranslateLoader(http: Http) {
     WaypointsListPage,
     WaypointsDetailPage,
     WaypointsEditorPage,
+    SettingsToolsListPage,
     SettingsPage,
     SettingsLanPage,
     SettingsWiFiPage,

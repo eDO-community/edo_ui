@@ -30,7 +30,7 @@
 
 import { Component } from '@angular/core';
 import { NavController, NavParams, ViewController } from 'ionic-angular';
-import { RosService, MoveType, WaypointsService, WaypointPath, Waypoint } from '../../services';
+import { RosService, MoveType, WaypointsService, WaypointPath, Waypoint, Point, DestinationType, Tool, ToolsService } from '../../services';
 
 import * as Utils from '../../utils';
 import { _ } from '../../utils';
@@ -47,32 +47,40 @@ export class WaypointsEditorPage {
 
   private moveType: string = 'joint';
   private moveName: string = '';
-  private moveTimeout: number = -1;
+  private tool: string = '';
+  private tools: Tool[] = [];
+  private moveDelay: number = -1;
   private moveSpeed: number = 100;
+  private forceGripperClosed:boolean = false;
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
-    public viewCtrl: ViewController, public ros: RosService) {
+    public viewCtrl: ViewController, public ros: RosService, private toolsService:ToolsService) {
       this.path = <WaypointPath>navParams.get('path');
       this.waypoint = <Waypoint>navParams.get('waypoint');
 
       if (this.waypoint != null){
         this.moveName = this.waypoint.name;
-        this.moveTimeout = this.waypoint.command.movement_attributes[0];
-        if (this.moveTimeout == 255){
-          this.moveTimeout = -1;
+        this.moveDelay = this.waypoint.command.delay;
+        if (this.moveDelay == 255){
+          this.moveDelay = -1;
         }
         this.moveSpeed = this.waypoint.command.ovr;
-        this.moveType = (this.waypoint.command.movement_type == MoveType.MOVE_CARLIN_J) ? 'cartesian' : 'joint';
+        this.moveType = (this.waypoint.command.move_type == MoveType.LINEAR) ? 'linear' : 'joint';
+        if (typeof this.waypoint.command.tool == 'string'){
+          this.tool = this.waypoint.command.tool;
+        }
       }else{
         this.enableJoypad = true;
       }
+
+      this.toolsService.load().then(tools => this.tools = tools);
   }
 
-  get moveTimeoutStr():string {
-    return this.moveTimeout.toString();
+  get moveDelayStr():string {
+    return this.moveDelay.toString();
   }
-  set moveTimeoutStr(value:string) {
-      this.moveTimeout = parseInt(value);
+  set moveDelayStr(value:string) {
+      this.moveDelay = parseInt(value);
   }
 
   private async onGotoWaypoint(event) {
@@ -91,18 +99,28 @@ export class WaypointsEditorPage {
     if (!this.ros.isReady)
       return;
 
-    var moveType: MoveType = MoveType.MOVE_TRJNT_J;
+    var moveType: MoveType = MoveType.JOINT;
     if (this.moveType !== 'joint') {
-      moveType = MoveType.MOVE_CARLIN_J;
+      moveType = MoveType.LINEAR
     }
-    let timeout = this.moveTimeout;
-    if (timeout == -1){
-      timeout = 255;
+    let delay = this.moveDelay;
+    if (delay == -1){
+      delay = 255;
+    }
+
+    var target:Point = {
+      data_type: DestinationType.JOINT,
+      cartesian_data: {x:0,y:0,z:0,a:0,e:0,r:0,config_flags:''},
+      joints_mask: this.ros.joints.joints_mask,
+      joints_data: Utils.cloneArray(this.ros.jointsTarget.joints)
+    }
+    if (this.forceGripperClosed){
+      target.joints_data[6] = 0;
     }
     if (this.waypoint == null){
-      this.path.addWaypoint(this.moveName, Utils.cloneArray(this.ros.jointsTarget), moveType, timeout);
+      this.path.addWaypoint(target, this.tool, this.moveName, moveType, delay, this.moveSpeed);
     }else{
-      this.path.updateWaypoint(this.waypoint, this.moveName, Utils.cloneArray(this.ros.jointsTarget), moveType, timeout)
+      this.path.updateWaypoint(this.waypoint, target, this.tool, this.moveName, moveType, delay, this.moveSpeed)
     }
     this.viewCtrl.dismiss({save:true});
   }

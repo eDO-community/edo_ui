@@ -194,6 +194,15 @@ export class EDOApp {
 
     var pluginMenuItems:any = await this.pluginService.loadPlugins();
 
+    pluginMenuItems.sort((a, b)=>{
+      var keyA = this.translateService.instant(a.title),
+          keyB = this.translateService.instant(b.title);
+      // Compare the 2 dates
+      if(keyA < keyB) return -1;
+      if(keyA > keyB) return 1;
+      return 0;
+  });
+
     for (var plugin in pluginMenuItems){
       this.pages.push({ title: pluginMenuItems[plugin].title, component: pluginMenuItems[plugin].componentType, icon: pluginMenuItems[plugin].icon })
     }
@@ -242,8 +251,8 @@ export class EDOApp {
   }
 
   isCalibrationPosition():boolean{
-    for (var i:number = 0; i < this.rosService.joints.length; i++){
-      if (Math.abs(this.rosService.joints[i]) > 0.5){
+    for (var i:number = 0; i < this.rosService.joints.joints.length; i++){
+      if (Math.abs(this.rosService.joints.joints[i].position) > 0.5){
         return false;
       }
     }

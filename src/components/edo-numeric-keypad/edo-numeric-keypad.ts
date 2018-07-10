@@ -69,28 +69,34 @@ export class EDONumericKeypad {
     return this._value;
   }
 
-  private onInputNumber(input:string){
-    if (this.firstTime){
-      if (input == '.'){
-        this._value = '0.';
-      }else{
-        this._value = input;
-      }
-    }else{
-      if (input == '.'){
-        if (this._value.indexOf('.') >= 0){
-          return;
-        }
-      }else if (input == '-'){
-        if (this._value.length > 0){
-          return;
-        }
-      }
-      this._value = this._value + input;
+  private onInputNumber(input: string) {
+    if(this.value == "0" || this._value == "-0" ){
+      if(input == "0")
+      return
     }
-    this.valueChange.next(this._value);
-    this.firstTime = false;
-    this.ref.markForCheck();
+    if (this.value.length < 10) {
+      if (this.firstTime) {
+        if (input == '.') {
+          this._value = '0.';
+        } else {
+          this._value = input;
+        }
+      } else {
+        if (input == '.') {
+          if (this._value.indexOf('.') >= 0) {
+            return;
+          }
+        } else if (input == '-') {
+          if (this._value.length > 0) {
+            return;
+          }
+        }
+        this._value = this._value + input;
+      }
+      this.valueChange.next(this._value);
+      this.firstTime = false;
+      this.ref.markForCheck();
+    }
   }
 
   private onInputBackspace(){

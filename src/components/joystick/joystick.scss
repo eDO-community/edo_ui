@@ -119,14 +119,49 @@ joystick {
 
     .movement-tabs .button-md {
       border: 1px solid color($colors, primary);
+      padding: 0 12px;
+    }
+    .gripper-container {
+      background-color: #e1e7f3;
+      margin: 0 5px 4px;
+      border-radius: 4px;
+      padding: 4px;
+      @media only screen and (max-width: 1200px) {
+        padding: 0 0 0 4px;
+      }
+
+        img {
+          width: 40px;
+          position: relative;
+          top: 1px;
+          @media only screen and (max-width: 1200px) {
+            width: 28px;
+          }
+        }
     }
     .gripper-label {
       font-size: 18px;
       color: color($colors, primary);
     }
+    .gripper-lable {
+      display: block;
+      text-align: center;
+      text-transform: uppercase;
+      color: #8b9ab1;
+      font-size: 11px;
+      @media only screen and (max-width: 1200px) {
+        font-size: 10px;
+      }
+    }
     .gripper-value {
-      margin: 12px 0 9px;
-      color: #0046ad;
+      margin: 14px 0 0;
+      color: color($colors, primary);
+      font-size: 24px;
+      line-height: 1;
+      @media only screen and (max-width: 1200px) {
+        margin: 6px 0 0;
+        font-size: 19px;
+      }
     }
   }
 
@@ -161,6 +196,10 @@ joystick {
     .axis-2 {
       height: 100%;
     }
+  }
+
+  .joystick-reset-button {
+    margin-top: 0;
   }
 
   .rotation-button-set {
@@ -285,7 +324,11 @@ joystick {
     height: 290px;
     @media only screen and (max-width: 1200px) {
       height: 230px;
-      padding-top: 11px !important;
+      padding-top: 9px !important;
+    }
+
+    .input-tabs {
+      margin-bottom: -5px;
     }
 
     label {
@@ -293,11 +336,12 @@ joystick {
       border-bottom: 1px solid #8995a7;
       line-height: 28px;
       font-size: 16px;
-      padding-bottom: 2px;
-      margin: 4px 5px;
+      margin: 0 5px;
       @media only screen and (max-width: 1200px) {
         line-height: 22px;
-        margin: 0 5px;
+        padding-bottom: 2px;
+        font-size: 14px;
+        margin: 0 5px -6px;
       }
       &.active {
         border-bottom: 1px solid color($colors, primary);
@@ -310,8 +354,8 @@ joystick {
       span {
         background-color: #8995a7;
         color: white;
-        padding: 4px;
-        font-size: 13px;
+        padding: 3px;
+        font-size: 12px;
         border-radius: 3px;
         margin-right: 4px;
       }

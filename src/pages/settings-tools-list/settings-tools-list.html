@@ -1,0 +1,87 @@
+<ion-header>
+  <ion-navbar color="primary">
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>
+      <span translate>tool-list-title</span>
+    </ion-title>
+    <ion-buttons end edo-ros-status>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <ion-fab bottom center padding-bottom [hidden]="sorting">
+    <button ion-fab color="primary" (click)="itemCreate()">
+      <ion-icon name="add"></ion-icon>
+    </button>
+  </ion-fab>
+
+  <div class="ion-card-wrapper">
+    <ion-card>
+      <ion-card-header>
+        <ion-item>
+          <span translate>tool-list-title</span>
+          <button ion-button item-right clear (click)="toggleSort()" [hidden]="!sorting">
+            <span translate>waypoints-sort-done</span>
+          </button>
+        </ion-item>
+      </ion-card-header>
+
+      <div class="no-tool" *ngIf="tools==0">
+        <img class="no-tool-big-image" src="assets/img/edo_nojoint.png" />
+        <p>
+          <span translate>tool-create-first-tool</span>
+        </p>
+        <img class="no-tool-small-image" src="assets/img/arrow-down.svg" />
+      </div>
+
+      <ion-list [reorder]="sorting" (ionItemReorder)="itemReorder($event)">
+        <ion-item-sliding #slidingItems *ngFor="let tool of tools; index as i">
+          <ion-item>
+            <ion-item (click)="editPropertyName(tool, 'name', 'tool-name')">
+              <h2 translate>tool-name</h2>
+              <h3>{{tool.name}}</h3>
+            </ion-item>
+            <ion-item (click)="editPropertyFrame(tool, 'x')">
+              <h2>x</h2>
+              <h3>{{tool.frame.x}}</h3>
+            </ion-item>
+            <ion-item (click)="editPropertyFrame(tool, 'y')">
+              <h2>y</h2>
+              <h3>{{tool.frame.y}}</h3>
+            </ion-item>
+            <ion-item (click)="editPropertyFrame(tool, 'z')">
+              <h2>z</h2>
+              <h3>{{tool.frame.z}}</h3>
+            </ion-item>
+            <ion-item (click)="editPropertyFrame(tool, 'a')">
+              <h2>a</h2>
+              <h3>{{tool.frame.a}}</h3>
+            </ion-item>
+            <ion-item (click)="editPropertyFrame(tool, 'e')">
+              <h2>e</h2>
+              <h3>{{tool.frame.e}}</h3>
+            </ion-item>
+            <ion-item (click)="editPropertyFrame(tool, 'r')">
+              <h2>r</h2>
+              <h3>{{tool.frame.r}}</h3>
+            </ion-item>
+          </ion-item>
+          <ion-item-options side="right">
+            <button ion-button color="light" (click)="slidingItems.close(); toggleSort(); $event.stopPropagation();">
+              <ion-icon name="funnel"></ion-icon>
+              <span translate>waypoints-detail-sort</span>
+            </button>
+            <button ion-button color="danger" (click)="itemDelete(i, tool); $event.stopPropagation();" [hidden]="sorting">
+              <ion-icon name="trash"></ion-icon>
+              <span translate>waypoint-delete</span>
+            </button>
+          </ion-item-options>
+        </ion-item-sliding>
+      </ion-list>
+
+    </ion-card>
+  </div>
+</ion-content>

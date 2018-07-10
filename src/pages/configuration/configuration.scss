@@ -42,25 +42,37 @@ page-configuration {
     z-index: 100;
   }
 
-  .configuration-separator {
-    height: 100%;
-    width: 1px;
-    flex-grow: 0;
-    padding: 0;
-
-    .configuration-separator-line {
-      width: 1px;
-      height: 100%;
-      background-color: color($colors, primary);
-    }
+  img {
+    width: 35vw;
+    margin: 15px 0 0 10vw;
   }
 
-  img {
-    width: 30vw;
-    margin-bottom: 30px;
+  .configuration-select-model {
+    max-width: 35vw;
+    margin: 0 auto;
+
+      h3 {
+        color: color($colors, primary);
+        font-size: 2.4vw;
+      }
+
+      p {
+        opacity: .7;
+        font-size: 1.6vw;
+        line-height: 2.3vw;
+      }
+
+      .item-select {
+        padding-left: 0;
+        margin-bottom: 5px;
+      }
+
+      .select {
+        max-width: none;
+      }
   }
 
   .configuration-large-btn {
-    padding: 0 5vw !important;
+    margin-top: 15px;
   }
 }

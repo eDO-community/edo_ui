@@ -1,4 +1,4 @@
-# Coding rules for eDo
+# Coding rules for e.DO
 
 ## Code style
 * Install [editor config](http://editorconfig.org/) in your editor, in order to

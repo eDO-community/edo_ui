@@ -41,10 +41,11 @@ import { JoystickComponent } from '../components/joystick/joystick';
 import { HoldDirective } from '../directives';
 import { EDONumberPipe } from '../pipes';
 
-import { RosService } from '../services';
+import { RosService, ToolsService } from '../services';
 import { RosJogMovementComponent } from '../components/ros-jog-movement/ros-jog-movement';
 import { ProgressBarComponent } from '../components/progress-bar/progress-bar';
 import { TranslateModule } from '@ngx-translate/core';
+import { Vibration } from '@ionic-native/vibration';
 
 @NgModule({
   declarations: [
@@ -73,13 +74,14 @@ import { TranslateModule } from '@ngx-translate/core';
     RosJogMovementComponent,
     ImageMapComponent,
     ProgressBarComponent
-  ]
+  ],
+  providers: []
 })
 export class EDOModule {
   static forRoot(): ModuleWithProviders {
     return {
       ngModule: EDOModule,
-      providers: [RosService]
+      providers: [ToolsService, RosService, Vibration]
     };
   }
 }

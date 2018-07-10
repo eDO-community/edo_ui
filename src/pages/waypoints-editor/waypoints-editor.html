@@ -23,7 +23,7 @@
 <ion-content padding-top padding-bottom>
   <div class="waypoint-goto" padding-left padding-right *ngIf="!enableJoypad">
     <button ion-button hold (holdingStart)="onGotoWaypoint($event);" (holdingCancel)="onReset($event);">
-      <span translate>waypoints-editor-goto-saved-waypoint</span>
+      <span [innerHTML]="'waypoints-editor-goto-saved-waypoint' | translate"></span>
     </button>
   </div>
 
@@ -32,9 +32,15 @@
 
       <ion-row>
         <ion-col>
-          <ion-item [hidden]="!enableJoypad">
+          <ion-item>
             <ion-label><span translate>waypoints-editor-field-name</span></ion-label>
             <ion-input placeholder="Move #" [(ngModel)]="moveName"></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col col-3>
+          <ion-item>
+            <ion-label><span translate style="color:#999">waypoints-editor-force-gripper-closed</span></ion-label>
+            <ion-toggle [checked]="forceGripperClosed" (ionChange)="forceGripperClosed = !forceGripperClosed"></ion-toggle>
           </ion-item>
         </ion-col>
         <ion-col col-3 text-right>
@@ -46,24 +52,36 @@
       </ion-row>
 
       <ion-row>
-        <ion-col>
-          <ion-item [hidden]="!enableJoypad" class="margin-top">
+        <ion-col col-4>
+          <ion-item class="margin-top">
             <ion-label><span translate>waypoints-editor-field-type</span></ion-label>
             <ion-select [(ngModel)]="moveType" interface="popover">
               <ion-option value="joint"><span translate>waypoints-editor-field-type-joint</span></ion-option>
-              <ion-option value="cartesian"><span translate>waypoints-editor-field-type-cartesian</span></ion-option>
+              <ion-option value="linear"><span translate>waypoints-editor-field-type-linear</span></ion-option>
             </ion-select>
           </ion-item>
         </ion-col>
-        <ion-col col-3>
-          <ion-select [(ngModel)]="moveTimeoutStr" class="margin-top" interface="popover">
-            <ion-option value="-1"><span translate>waypoints-editor-field-timeout-fly</span></ion-option>
-            <ion-option value="0">0 s</ion-option>
-            <ion-option value="1">1 s</ion-option>
-            <ion-option value="2">2 s</ion-option>
-            <ion-option value="5">5 s</ion-option>
-            <ion-option value="10">10 s</ion-option>
-          </ion-select>
+        <ion-col col-2>
+          <ion-item class="margin-top">
+            <ion-label><span translate>waypoints-editor-field-tool</span></ion-label>
+            <ion-select [(ngModel)]="tool" interface="popover">
+              <ion-option value="">No tool</ion-option>
+              <ion-option value="{{t.id}}" *ngFor="let t of tools; index as i">{{t.name}}</ion-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+        <ion-col col-2>
+          <ion-item class="margin-top">
+            <ion-label><span translate>waypoints-editor-field-delay</span></ion-label>
+            <ion-select [(ngModel)]="moveDelayStr" interface="popover">
+              <ion-option value="-1"><span translate>waypoints-editor-field-delay-fly</span></ion-option>
+              <ion-option value="0">0 s</ion-option>
+              <ion-option value="1">1 s</ion-option>
+              <ion-option value="2">2 s</ion-option>
+              <ion-option value="5">5 s</ion-option>
+              <ion-option value="10">10 s</ion-option>
+            </ion-select>
+          </ion-item>
         </ion-col>
         <ion-col>
           <edo-range-wrapper [speed]="moveSpeed">

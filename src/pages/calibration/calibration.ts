@@ -32,7 +32,7 @@ import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/
 import { IonicPage, NavController, NavParams, MenuController } from 'ionic-angular';
 import { HomePage } from '../home/home';
 import { LoginPage } from '../login/login';
-import { RosService, MovementCommand, MoveType } from '../../services';
+import { RosService, MovementCommand, MoveType, MoveCommand, DestinationType } from '../../services';
 import { Subscription } from 'rxjs/Subscription';
 
 @Component({
@@ -57,8 +57,8 @@ export class CalibrationPage {
       if (navParams.data && navParams.data.firstTime){
         this.firstTime = navParams.data.firstTime;
       }
-      this.joints = new Array(6).fill(0);
-      this.jointsCalibrated = new Array(6).fill(false);
+      this.joints = new Array(10).fill(0);
+      this.jointsCalibrated = new Array(10).fill(false);
       this.jointsChangeEventSubscription = this.ros.jointsChangeEvent.subscribe((_) => {
         this.ref.markForCheck();
       });
@@ -84,7 +84,12 @@ export class CalibrationPage {
     this.joints[joint] = value * this.speed / 100;
 
     if (value !== 0){
-      this.ros.sendJogCommand(MoveType.MOVE_TRJNT_J, this.joints);
+      this.ros.sendJogCommand(MoveType.JOINT, {
+        data_type: DestinationType.JOINT,
+        cartesian_data: {x:0,y:0,z:0,a:0,e:0,r:0,config_flags:''},
+        joints_data: this.joints,
+        joints_mask: this.ros.joints.joints_mask
+      });
     }
   }
 
@@ -104,9 +109,14 @@ export class CalibrationPage {
     }
   }
 
+  private onCalibrateAll():void{
+    this.ros.sendCalibrateCommand(null);
+  }
+
+
   private nextToBeCalibrated():number{
     for (var i = 0; i < this.jointsCalibrated.length; i++) {
-      if (!this.jointsCalibrated[i]){
+      if (!this.jointsCalibrated[i] && (this.ros.joints.joints_mask & (1 << i)) > 0){
         return i;
       }
     }
@@ -114,14 +124,24 @@ export class CalibrationPage {
   }
 
   private onReset(event) {
-    let moveComm: MovementCommand = {
-      size: 6,
-      data: [0, 0, 0, 0, 0, 0],
-      movement_attributes: [],
-      movement_type: MoveType.MOVE_TRJNT_J,
-      ovr: 0
+    let movementCommand: MovementCommand = {
+      move_command: MoveCommand.EXE_MOVE,
+      move_type: MoveType.JOINT,
+      ovr: this.speed,
+      delay: 0,
+      cartesian_linear_speed: 0,
+      target: {
+        data_type: DestinationType.JOINT,
+        cartesian_data: {x:0,y:0,z:0,a:0,e:0,r:0,config_flags:''},
+        joints_data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        joints_mask: this.ros.joints.joints_mask //FIXME: should we send the right mask here ?
+      },
+      via: {cartesian_data:{x:0,y:0,z:0,a:0,e:0,r:0,config_flags:''}, data_type:0, joints_data:[], joints_mask:0},
+      tool: {x:0,y:0,z:0,a:0,e:0,r:0},
+      frame: {x:0,y:0,z:0,a:0,e:0,r:0},
+      remote_tool: 0
     }
-    this.ros.pushMoveCommand(moveComm, null);
+    this.ros.pushMoveCommand(movementCommand, null);
   }
 
   private onStop(event) {

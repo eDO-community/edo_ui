@@ -32,5 +32,9 @@ export { RosService } from '../services';
 export { MoveType } from '../services';
 export { SystemCommandType } from '../services';
 export { MessageFeedback } from '../services';
+export { MoveCommand } from '../services';
+export { DestinationType } from '../services';
 export { EDOModule } from './edo.module';
 export { EDOShowInMenu } from '../utils';
+export { HoldDirective } from '../directives';
+

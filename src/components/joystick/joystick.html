@@ -17,8 +17,8 @@
               </ion-col>
             </ion-row>
             <ion-row justify-content-between class="axis-0">
-              <ion-col col-4>
-                <button #a0n="holdRef" [disabled]="a0p.value > 0" hold (holding)="onCartesianValueChange(1, -1)" (holdingCancel)="onCartesianValueChange(1, 0)" class="arrow-button axis-0-negative bg-horizontal">
+              <ion-col class="bg-horizontal" col-4>
+                <button #a0n="holdRef" [disabled]="a0p.value > 0" hold (holding)="onCartesianValueChange(1, -1)" (holdingCancel)="onCartesianValueChange(1, 0)" class="arrow-button axis-0-negative">
                   <!-- Left -->
                   <svg class="arrow-button-svg" width="100%" height="100%" viewBox="0 0 80 80" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
                     <path class="arrow-button-svg-bg" d="M67.912,70l-60.256,0c-2.57,0 -4.656,-1.907 -4.656,-4.257l0,-51.613c0,-2.279 2.024,-4.13 4.516,-4.13l60.396,0l11.088,30l-11.088,30l0,0Z" />
@@ -77,13 +77,13 @@
       <ion-row>
         <ion-col>
           <div class="vertical-buttons">
-            <button [disabled]="currentJoint >= 5" (click)="currentJoint = currentJoint + 1" class="arrow-button axis-2-positive">
+            <button (click)="setCurrentJoint(currentJoint + 1, true)" class="arrow-button axis-2-positive">
               <svg class="arrow-button-svg" width="100%" height="100%" viewBox="0 0 80 80" version="1.1" xmlns="http://www.w3.org/2000/svg">
                 <path class="arrow-button-svg-bg" d="M10,67.912l0,-60.256c0,-2.57 1.907,-4.656 4.257,-4.656l51.613,0c2.279,0 4.13,2.024 4.13,4.516l0,60.396l-30,11.088l-30,-11.088l0,0Z" />
                 <path class="arrow-button-svg-arrow" d="M40,21.315l12,12l-24,0l12,-12Z" />
               </svg>
             </button>
-            <button [disabled]="currentJoint <= 0" (click)="currentJoint = currentJoint - 1" class="arrow-button axis-2-negative">
+            <button (click)="setCurrentJoint(currentJoint - 1, false)" class="arrow-button axis-2-negative">
               <svg class="arrow-button-svg" width="100%" height="100%" viewBox="0 0 80 80" version="1.1" xmlns="http://www.w3.org/2000/svg">
                 <path class="arrow-button-svg-bg" d="M70,12.088l0,60.256c0,2.57 -1.907,4.656 -4.257,4.656l-51.613,0c-2.279,0 -4.13,-2.024 -4.13,-4.516l0,-60.396l30,-11.088l30,11.088l0,0Z" />
                 <path class="arrow-button-svg-arrow" d="M40,58.685l-12,-12l24,0l-12,12Z" />
@@ -93,7 +93,7 @@
         </ion-col>
         <ion-col>
           <div class="square-dimensions">
-              <img-map [src]="'assets/edo/joint-' + currentJoint + '.square.png'" [coords]="mapPoints" (mapclick)="currentJoint = $event"
+              <img-map [src]="'assets/edo/joint-' + currentJoint + '.square.png'" [coords]="mapPoints" (mapclick)="setCurrentJoint($event, true)"
                 (swipe)="onMapSwipe($event)">
               </img-map>
             </div>
@@ -101,7 +101,7 @@
       </ion-row>
     </ion-col>
     <ion-col col-4 *ngIf="mode == JoystickMode.INPUT_JOINTS || mode == JoystickMode.INPUT_CARTESIAN" class="movements input-values" align-self-center>
-      <ion-row>
+      <ion-row class="input-tabs">
         <ion-col>
           <button ion-button small (click)="onSwitchInput(JoystickMode.INPUT_JOINTS)" [outline]="mode == JoystickMode.INPUT_CARTESIAN"><span translate>joystick-mode-joints</span></button>
         </ion-col>
@@ -111,102 +111,119 @@
       </ion-row>
       <div *ngIf="mode == JoystickMode.INPUT_JOINTS">
         <ion-row>
-          <ion-col>
+          <ion-col col-6 *ngIf="ros.joints.joints_mask % 2 >= 1">
             <label (click)="inputActiveIndex = 0" [class.active]="inputActiveIndex == 0">
               <span>J1</span> {{ inputJoints[0] }} °
               <a *ngIf="inputActiveIndex == 0" class="input-values-clear" (click)=" inputJoints[0] = '' ">&times;</a>
             </label>
           </ion-col>
-          <ion-col>
+          <ion-col col-6 *ngIf="ros.joints.joints_mask % 4 >= 2">
             <label (click)="inputActiveIndex = 1" [class.active]="inputActiveIndex == 1">
               <span>J2</span> {{ inputJoints[1] }} °
               <a *ngIf="inputActiveIndex == 1" class="input-values-clear" (click)=" inputJoints[1] = '' ">&times;</a>
             </label>
           </ion-col>
-        </ion-row>
-        <ion-row>
-          <ion-col>
+          <ion-col col-6 *ngIf="ros.joints.joints_mask % 8 >= 4">
             <label (click)="inputActiveIndex = 2" [class.active]="inputActiveIndex == 2">
               <span>J3</span> {{ inputJoints[2] }} °
               <a *ngIf="inputActiveIndex == 2" class="input-values-clear" (click)=" inputJoints[2] = '' ">&times;</a>
             </label>
           </ion-col>
-          <ion-col>
+          <ion-col col-6 *ngIf="ros.joints.joints_mask % 16 >= 8">
             <label (click)="inputActiveIndex = 3" [class.active]="inputActiveIndex == 3">
               <span>J4</span> {{ inputJoints[3] }} °
               <a *ngIf="inputActiveIndex == 3" class="input-values-clear" (click)=" inputJoints[3] = '' ">&times;</a>
             </label>
           </ion-col>
-        </ion-row>
-        <ion-row>
-          <ion-col>
+          <ion-col col-6 *ngIf="ros.joints.joints_mask % 32 >= 16">
             <label (click)="inputActiveIndex = 4" [class.active]="inputActiveIndex == 4">
               <span>J5</span> {{ inputJoints[4] }} °
               <a *ngIf="inputActiveIndex == 4" class="input-values-clear" (click)=" inputJoints[4] = '' ">&times;</a>
             </label>
           </ion-col>
-          <ion-col>
+          <ion-col col-6 *ngIf="ros.joints.joints_mask % 64 >= 32">
             <label (click)="inputActiveIndex = 5" [class.active]="inputActiveIndex == 5">
               <span>J6</span> {{ inputJoints[5] }} °
               <a *ngIf="inputActiveIndex == 5" class="input-values-clear" (click)=" inputJoints[5] = '' ">&times;</a>
             </label>
           </ion-col>
         </ion-row>
-        <ion-row>
-          <ion-col>
-            <button ion-button hold (holdingStart)="onInputGo($event)" (holdingCancel)="onStop($event)"><span translate>joystick-goto-point</span></button>
-          </ion-col>
-        </ion-row>
       </div>
       <div *ngIf="mode == JoystickMode.INPUT_CARTESIAN">
         <ion-row>
           <ion-col>
-            <label (click)="inputActiveKey = 'x'" [class.active]="inputActiveKey == 'x'">
-              <span>X</span> {{ inputCartesian.x }} mm
-              <a *ngIf="inputActiveKey == 'x'" class="input-values-clear" (click)=" inputCartesian.x = '' ">&times;</a>
+            <label (click)="inputActiveIndex = 0" [class.active]="inputActiveIndex == 0">
+              <span>X</span> {{ inputCartesian[0] }} mm
+              <a *ngIf="inputActiveIndex == 0" class="input-values-clear" (click)=" inputCartesian[0] = '' ">&times;</a>
             </label>
           </ion-col>
           <ion-col>
-            <label (click)="inputActiveKey = 'a'" [class.active]="inputActiveKey == 'a'">
-              <span>A</span> {{ inputCartesian.a }} °
-              <a *ngIf="inputActiveKey == 'a'" class="input-values-clear" (click)=" inputCartesian.a = '' ">&times;</a>
-            </label>
-          </ion-col>
-        </ion-row>
-        <ion-row>
-          <ion-col>
-            <label (click)="inputActiveKey = 'y'" [class.active]="inputActiveKey == 'y'">
-              <span>Y</span> {{ inputCartesian.y }} mm
-              <a *ngIf="inputActiveKey == 'y'" class="input-values-clear" (click)=" inputCartesian.y = '' ">&times;</a>
-            </label>
-          </ion-col>
-          <ion-col>
-            <label (click)="inputActiveKey = 'e'" [class.active]="inputActiveKey == 'e'">
-              <span>E</span> {{ inputCartesian.e }} °
-              <a *ngIf="inputActiveKey == 'e'" class="input-values-clear" (click)=" inputCartesian.e = '' ">&times;</a>
+            <label (click)="inputActiveIndex = 3" [class.active]="inputActiveIndex == 3">
+              <span>A</span> {{ inputCartesian[3] }} °
+              <a *ngIf="inputActiveIndex == 3" class="input-values-clear" (click)=" inputCartesian[3] = '' ">&times;</a>
             </label>
           </ion-col>
         </ion-row>
         <ion-row>
           <ion-col>
-            <label (click)="inputActiveKey = 'z'" [class.active]="inputActiveKey == 'z'">
-              <span>Z</span> {{ inputCartesian.z }} mm
-              <a *ngIf="inputActiveKey == 'z'" class="input-values-clear" (click)=" inputCartesian.z = '' ">&times;</a>
+            <label (click)="inputActiveIndex = 1" [class.active]="inputActiveIndex == 1">
+              <span>Y</span> {{ inputCartesian[1] }} mm
+              <a *ngIf="inputActiveIndex == 1" class="input-values-clear" (click)=" inputCartesian[1] = '' ">&times;</a>
             </label>
           </ion-col>
           <ion-col>
-            <label (click)="inputActiveKey = 'r'" [class.active]="inputActiveKey == 'r'">
-              <span>R</span> {{ inputCartesian.r }} °
-              <a *ngIf="inputActiveKey == 'r'" class="input-values-clear" (click)=" inputCartesian.r = '' ">&times;</a>
+            <label (click)="inputActiveIndex = 4" [class.active]="inputActiveIndex == 4">
+              <span>E</span> {{ inputCartesian[4] }} °
+              <a *ngIf="inputActiveIndex == 4" class="input-values-clear" (click)=" inputCartesian[4] = '' ">&times;</a>
             </label>
           </ion-col>
         </ion-row>
         <ion-row>
           <ion-col>
-            <button ion-button translate  hold (holdingStart)="onInputGo($event)" (holdingCancel)="onStop($event)"><span translate>joystick-goto-point</span></button>
+            <label (click)="inputActiveIndex = 2" [class.active]="inputActiveIndex == 2">
+              <span>Z</span> {{ inputCartesian[2] }} mm
+              <a *ngIf="inputActiveIndex == 2" class="input-values-clear" (click)=" inputCartesian[2] = '' ">&times;</a>
+            </label>
+          </ion-col>
+          <ion-col>
+            <label (click)="inputActiveIndex = 5" [class.active]="inputActiveIndex == 5">
+              <span>R</span> {{ inputCartesian[5] }} °
+              <a *ngIf="inputActiveIndex == 5" class="input-values-clear" (click)=" inputCartesian[5] = '' ">&times;</a>
+            </label>
           </ion-col>
         </ion-row>
       </div>
+      <ion-row>
+        <ion-col col-6 *ngIf="ros.joints.joints_mask % 128 >= 64">
+          <label (click)="inputActiveIndex = 6" [class.active]="inputActiveIndex == 6">
+            <span>J7</span> {{ inputJoints[6] }} mm
+            <a *ngIf="inputActiveIndex == 6" class="input-values-clear" (click)=" inputJoints[6] = '' ">&times;</a>
+          </label>
+        </ion-col>
+        <ion-col col-6 *ngIf="ros.joints.joints_mask % 256 >= 128">
+          <label (click)="inputActiveIndex = 7" [class.active]="inputActiveIndex == 7">
+            <span>J8</span> {{ inputJoints[7] }} °
+            <a *ngIf="inputActiveIndex == 7" class="input-values-clear" (click)=" inputJoints[7] = '' ">&times;</a>
+          </label>
+        </ion-col>
+        <ion-col col-6 *ngIf="ros.joints.joints_mask % 512 >= 256">
+          <label (click)="inputActiveIndex = 8" [class.active]="inputActiveIndex == 8">
+            <span>J9</span> {{ inputJoints[8] }} °
+            <a *ngIf="inputActiveIndex == 8" class="input-values-clear" (click)=" inputJoints[8] = '' ">&times;</a>
+          </label>
+        </ion-col>
+        <ion-col col-6 *ngIf="ros.joints.joints_mask % 1024 >= 512">
+          <label (click)="inputActiveIndex = 9" [class.active]="inputActiveIndex == 9">
+            <span>J10</span> {{ inputJoints[9] }} °
+            <a *ngIf="inputActiveIndex == 9" class="input-values-clear" (click)=" inputJoints[9] = '' ">&times;</a>
+          </label>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <button ion-button translate  hold (holdingStart)="onInputGo($event)" (holdingCancel)="onStop($event)"><span translate>joystick-goto-point</span></button>
+        </ion-col>
+      </ion-row>
     </ion-col>
     <ion-col col-4 class="movement-options" align-self-center>
       <ion-row class="movement-tabs">
@@ -220,31 +237,51 @@
           <button ion-button block [outline]="mode == JoystickMode.JOINTS || mode == JoystickMode.CARTESIAN" (click)="onSwitchInput(JoystickMode.INPUT_JOINTS)"><span translate>joystick-mode-input</span></button>
         </ion-col>
       </ion-row>
-      <!-- <ion-row>
-        <ion-col col-4 align-self-center>
-          <span class="gripper-label" translate>joystick-gripper-angle</span>
+      <ion-row class="gripper-container" *ngIf="mode == JoystickMode.JOINTS && ros.joints.joints_mask % 128 >= 64">
+        <ion-col col-2 align-self-center>
+          <img src="assets/img/gripper-angle.svg" />
         </ion-col>
-        <ion-col col-2>
-          <h1 text-center class="gripper-value">{{ gripper }}</h1>
+        <ion-col col-5>
+          <h1 text-center class="gripper-value">{{(ros.joints.joints !== undefined && ros.joints.joints !== null && ros.joints.joints[6] !== undefined && ros.joints.joints[6] !== null) ? (ros.joints.joints[6].position | edonumber) : null }} mm</h1>
+          <span class="gripper-lable" translate>joystick-gripper-opening</span>
         </ion-col>
-        <ion-col col-6 class="gripper-buttons">
-          <button ion-button icon-only #apn="holdRef" [disabled]="app.value > 0" hold>
+        <ion-col col-5 class="gripper-buttons">
+          <button ion-button icon-only #apn="holdRef" [disabled]="app.value > 0"  hold (holding)="onJointsValueChange(6, -1)" (holdingCancel)="onJointsValueChange(6, 0)">
               <ion-icon name="remove"></ion-icon>
           </button>
-          <button ion-button icon-only #app="holdRef" [disabled]="apn.value > 0" hold>
+          <button ion-button icon-only #app="holdRef" [disabled]="apn.value > 0"  hold (holding)="onJointsValueChange(6, 1)" (holdingCancel)="onJointsValueChange(6, 0)">
               <ion-icon name="add"></ion-icon>
           </button>
         </ion-col>
-      </ion-row> -->
-      <ion-row>
-        <edo-range-wrapper [speed]="speed">
-          <ion-range min="0" max="100" step="5" snaps="true" [(ngModel)]="speed">
-          </ion-range>
-        </edo-range-wrapper>
+      </ion-row>
+      <ion-row class="gripper-container" *ngIf="mode == JoystickMode.CARTESIAN && ros.joints.joints_mask % 128 >= 64">
+        <ion-col col-2 align-self-center>
+          <img src="assets/img/gripper-angle.svg" />
+        </ion-col>
+        <ion-col col-5>
+          <h1 text-center class="gripper-value">{{(ros.joints.joints !== undefined && ros.joints.joints !== null && ros.joints.joints[6] !== undefined && ros.joints.joints[6] !== null) ? (ros.joints.joints[6].position | edonumber) : null }} mm</h1>
+          <span class="gripper-lable" translate>joystick-gripper-opening</span>
+        </ion-col>
+        <ion-col col-5 class="gripper-buttons">
+          <button ion-button icon-only #apn="holdRef" [disabled]="app.value > 0"  hold (holding)="onXTNDPosJointsValueChange(6, -1)" (holdingCancel)="onXTNDPosJointsValueChange(6, 0)">
+              <ion-icon name="remove"></ion-icon>
+          </button>
+          <button ion-button icon-only #app="holdRef" [disabled]="apn.value > 0"  hold (holding)="onXTNDPosJointsValueChange(6, 1)" (holdingCancel)="onXTNDPosJointsValueChange(6, 0)">
+              <ion-icon name="add"></ion-icon>
+          </button>
+        </ion-col>
       </ion-row>
       <ion-row>
         <ion-col>
-          <button ion-button block color="primary" hold (holdingStart)="onReset($event)" (holdingCancel)="onStop($event)"><span translate>joystick-reset</span></button>
+          <edo-range-wrapper [speed]="speed">
+            <ion-range min="0" max="100" step="5" snaps="true" [(ngModel)]="speed">
+            </ion-range>
+          </edo-range-wrapper>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <button class="joystick-reset-button" ion-button block color="primary" hold (holdingStart)="onReset($event)" (holdingCancel)="onStop($event)"><span translate>joystick-reset</span></button>
         </ion-col>
       </ion-row>
     </ion-col>
@@ -313,7 +350,7 @@
     <ion-col col-4 *ngIf="mode == JoystickMode.JOINTS" class="joint-button-set movements">
       <ion-row align-item-center text-center>
         <ion-col col-8 align-self-center>
-          <h1 class="joint-value">{{(ros.joints !== undefined && ros.joints !== null) ? (ros.joints[currentJoint] | edonumber) : null }}°</h1>
+          <h1 class="joint-value">{{(ros.joints.joints !== undefined && ros.joints.joints !== null && ros.joints.joints[currentJoint] !== undefined && ros.joints.joints[currentJoint] !== null) ? (ros.joints.joints[currentJoint].position | edonumber) : null }}°</h1>
           <ion-badge>J{{ currentJoint + 1 }}</ion-badge>
         </ion-col>
         <ion-col col-4 align-self-center class="joint-buttons">
@@ -332,7 +369,7 @@
     </ion-col>
     <!-- Numeric keypad -->
     <ion-col col-4 *ngIf="mode == JoystickMode.INPUT_JOINTS || mode == JoystickMode.INPUT_CARTESIAN">
-      <edo-numeric-keypad [value]="(mode == JoystickMode.INPUT_JOINTS) ? inputJoints[inputActiveIndex] : inputCartesian[inputActiveKey]"
+      <edo-numeric-keypad [value]="(mode == JoystickMode.INPUT_JOINTS || inputActiveIndex >= 6) ? inputJoints[inputActiveIndex] : inputCartesian[inputActiveIndex]"
         (valueChange)="onKeypadInputChange($event)"></edo-numeric-keypad>
     </ion-col>
     <!-- END Numeric keypad -->

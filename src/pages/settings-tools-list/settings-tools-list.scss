@@ -28,7 +28,74 @@
  * either expressed or implied, of the FreeBSD Project.
  */
 
-export * from './plugin.service';
-export * from './ros.service';
-export * from './waypoints.service';
-export * from './tools.service';
+page-settings-tools-list { 
+    ion-content {
+      background-color: color($colors, light-gray) !important;
+    }
+  
+    .scroll-content{
+      padding-bottom: 0 !important;
+    }
+  
+  
+    ion-card{
+      height: 100% !important;
+      margin-bottom: 0 !important;
+  
+      .list-md{
+        overflow-y: scroll;
+        height: calc(100% - 77px);
+  
+  
+        .item{
+           border-block-start:  1px solid $list-md-border-color;
+           border-bottom: 1px solid $list-md-border-color;
+        }
+      }
+    }
+  
+
+  
+ 
+    .ion-card-wrapper {
+      max-width: 750px;
+      margin: 0 auto;
+      width: 100%;
+      height: calc(100% - 20px) !important;
+    }
+
+    ion-item-options {
+      button {
+        width: 64px;
+      }
+    }
+
+    .no-tool {
+      position: absolute;
+      left: 0;
+      right: 0;
+      margin: 0 auto;
+      max-width: 300px;
+      text-align: center;
+      bottom: 215px;
+  
+  
+      .no-tool-big-image {
+        max-width: 110px;
+        margin: 0 auto;
+      }
+  
+      p {
+        color: color($colors, primary);
+        font-size: 16px;
+        padding: 5px 0;
+      }
+  
+      .no-tool-small-image {
+        max-width: 20px;
+        margin: 0 auto;
+      }
+    }
+  
+  
+}

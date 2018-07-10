@@ -29,10 +29,12 @@
  */
 
 import { Component } from '@angular/core';
-import { NavController, PopoverController, MenuController } from 'ionic-angular';
+import { NavController, PopoverController, MenuController, AlertController } from 'ionic-angular';
 import { RosService } from '../../services/index';
 import { Subscription } from 'rxjs/Subscription';
 import { ConfigurationBoardGuideComponent } from '../../components/configuration-board-guide/configuration-board-guide';
+import { TranslateService } from '@ngx-translate/core';
+import { _ } from '../../utils';
 
 @Component({
   selector: 'page-configuration-board',
@@ -48,6 +50,8 @@ export class ConfigurationBoardPage {
 
   constructor(private navCtrl: NavController,
     private popoverCtrl: PopoverController,
+    public alertCtrl:AlertController,
+    public translateService: TranslateService,
     private rosService: RosService,
     private menu: MenuController) {
     this.setJointIdStatuSubscription = this.rosService.setJointIdStatusEvent.subscribe((event) => {
@@ -62,8 +66,27 @@ export class ConfigurationBoardPage {
         this.currentJoint++;
       }
       console.log("Data: " + event.data + " Command: " + event.command);
-    })
-    this.showConfigurationBoardGuide(0);
+    });
+
+    let alert = this.alertCtrl.create({
+      title: this.translateService.instant(_('configuration-start-title')),
+      message: this.translateService.instant(_('configuration-start-message')),
+      buttons: [],
+      enableBackdropDismiss: false
+    });
+    alert.addButton({
+      text: this.translateService.instant(_('configuration-start-confirm')),
+      handler: () => {
+        this.showConfigurationBoardGuide(0);
+      }
+    });
+    alert.addButton({
+      text: this.translateService.instant(_('configuration-start-disconnect')),
+      handler: () =>{
+        this.rosService.disconnect();
+      }
+    });
+    alert.present();
   }
 
   ionViewDidEnter() {
