@@ -50,6 +50,7 @@ export class WaypointsDetailPage {
 
   private sorting: boolean = false;
 
+  // -1: infinite    0: no loop   <1000: loop count   >1000: milliseconds since start
   private loopCount: number = 0;
 
   private loopRemaining: number = 0;
@@ -57,6 +58,11 @@ export class WaypointsDetailPage {
   private speed: number = 100;
 
   private currentElement: number = -1;
+
+  private timeLastLoop: number = 0;
+  private timeTotal:number = 0;
+  private startTimeLastLoop: number = 0;
+  private startTimeTotal: number = 0;
 
   @ViewChildren('slidingItems') private slidingItems: QueryList<any>;
 
@@ -182,6 +188,46 @@ export class WaypointsDetailPage {
         label: '50 ' + this.translateService.instant(_('waypoints-detail-loop-setting-times')),
         value: '50',
         checked: this.loopCount == 50
+      }, {
+        type: 'radio',
+        label: '5 ' + this.translateService.instant(_('waypoints-detail-loop-setting-minutes')),
+        value: '300000',
+        checked: this.loopCount == 300000
+      }, {
+        type: 'radio',
+        label: '15 ' + this.translateService.instant(_('waypoints-detail-loop-setting-minutes')),
+        value: '900000',
+        checked: this.loopCount == 900000
+      }, {
+        type: 'radio',
+        label: '30 ' + this.translateService.instant(_('waypoints-detail-loop-setting-minutes')),
+        value: '1800000',
+        checked: this.loopCount == 1800000
+      }, {
+        type: 'radio',
+        label: '1 ' + this.translateService.instant(_('waypoints-detail-loop-setting-hour')),
+        value: '3600000',
+        checked: this.loopCount == 3600000
+      }, {
+        type: 'radio',
+        label: '2 ' + this.translateService.instant(_('waypoints-detail-loop-setting-hours')),
+        value: '7200000',
+        checked: this.loopCount == 7200000
+      }, {
+        type: 'radio',
+        label: '4 ' + this.translateService.instant(_('waypoints-detail-loop-setting-hours')),
+        value: '14400000',
+        checked: this.loopCount == 14400000
+      }, {
+        type: 'radio',
+        label: '12 ' + this.translateService.instant(_('waypoints-detail-loop-setting-hours')),
+        value: '43200000',
+        checked: this.loopCount == 43200000
+      }, {
+        type: 'radio',
+        label: '24 ' + this.translateService.instant(_('waypoints-detail-loop-setting-hours')),
+        value: '86400000',
+        checked: this.loopCount == 86400000
       }],
       buttons: [{
         text: this.translateService.instant(_('settings-cancel')),
@@ -202,7 +248,11 @@ export class WaypointsDetailPage {
   private async runClicked(event, isLoop: boolean) {
     this.closeAllItems();
     if (this.currentElement < 0 || isLoop) {
+      this.startTimeLastLoop = new Date().getTime();
       if (!isLoop){
+        this.startTimeTotal = new Date().getTime();
+        this.timeLastLoop = 0;
+        this.timeTotal = 0;
         await this.ros.clearQueue();
         this.currentElement = 0;
       }
@@ -212,9 +262,17 @@ export class WaypointsDetailPage {
         command.ovr = command.ovr * this.speed / 100;
         this.ros.pushMoveCommand(command, index).then(completedId => {
           if (this.currentElement == this.path.waypoints.length - 1) {
+            this.timeLastLoop = (new Date().getTime() - this.startTimeLastLoop) / 1000;
+            this.timeTotal = (new Date().getTime() - this.startTimeTotal) / 1000;
             if (this.loopCount < 0) {
               this.runClicked(null, true);
-            } else if (this.loopRemaining > 0) {
+            }else if (this.loopCount > 1000) {
+              if ((new Date().getTime() - this.startTimeTotal) < this.loopCount){
+                this.runClicked(null, true);
+              }else{
+                this.loopRemaining = 0;
+              }
+            } else if (this.loopRemaining > 1) {
               this.loopRemaining--;
               this.runClicked(null, true);
             } else {
@@ -223,7 +281,7 @@ export class WaypointsDetailPage {
           }
 
           if (this.currentElement == this.path.waypoints.length - 1) {
-            if (this.loopRemaining != 0){
+            if (this.loopRemaining != 0 && (this.loopCount < 0 || this.loopRemaining != this.loopCount)){
               this.currentElement = 0;
             }else{
               this.currentElement = -1;

@@ -75,6 +75,9 @@
               <div class="waypoints-player-name">
                 <h2 (click)="onEditName()">{{path.name}}</h2>
               </div>
+              <div class="waypoints-player-name">
+                <h3><span translate>waypoints-detail-time-last-loop</span> {{timeLastLoop | number:'1.1-1'}}s <span translate>waypoints-detail-time-total</span> {{timeTotal | number:'1.1-1'}}s </h3>
+              </div>
             </ion-col>
             <ion-col col-auto col-4>
               <ion-row>
@@ -83,7 +86,8 @@
                     <button ion-fab mini [color]="loopCount != 0 ? 'primary' : 'light-gray'" (click)="loopClicked()">
                       <ion-icon name="repeat"></ion-icon>
                     </button>
-                    <div class="loop-badge" [hidden]="loopCount == 0 || loopRemaining < 0">{{loopRemaining}}</div>
+                    <div class="loop-badge" [hidden]="loopCount == 0 || loopCount <= 1000 || loopRemaining < 0">τ</div>
+                    <div class="loop-badge" [hidden]="loopCount == 0 || loopCount > 1000 || loopRemaining < 0">{{loopRemaining}}</div>
                     <div class="loop-badge" [hidden]="loopCount == 0 || loopRemaining >= 0">∞</div>
                 </ion-col>
                 <ion-col col-3>

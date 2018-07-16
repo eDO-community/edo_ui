@@ -114,10 +114,12 @@ page-waypoints-detail {
     border-top: 1px solid #dedede;
 
     .waypoints-player-name {
-      height: 100%;
       display: flex;
       align-items: center;
       h2 {
+        height: 25px;
+        line-height: 25px;
+        overflow: hidden;
         word-break: break-all;
         font-size: 18px;
         color: color($colors, primary);
