@@ -151,7 +151,7 @@ export class LoginPage {
     try{
       this.language = await this.editLanguageAlert(this.translateService.instant(_('settings-edo-language')),
         this.translateService.instant(_('settings-edo-language-message')),
-        this.language);
+        await this.storage.get(SettingsKeys.LANGUAGE));
       await this.storage.set(SettingsKeys.LANGUAGE, this.language);
       if (this.language){
         this.translateService.use(this.language);
