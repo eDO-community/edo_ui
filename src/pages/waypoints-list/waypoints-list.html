@@ -38,7 +38,7 @@
         <ion-item-sliding #slidingItems *ngFor="let path of waypointPaths; index as i">
           <ion-item (click)="itemSelected(i, path)"  detail-push>
             <h2>{{ path.name }}</h2>
-            <p>{{ path.id }}</p>
+            <!-- <p>{{ path.id }}</p> -->
           </ion-item>
           <ion-item-options side="right">
             <button ion-button color="light" (click)="slidingItems.close(); itemClone(i, path); $event.stopPropagation();">
