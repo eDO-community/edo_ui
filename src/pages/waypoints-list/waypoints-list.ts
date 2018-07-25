@@ -156,4 +156,70 @@ export class WaypointsListPage {
   private closeAllItems(){
     this.slidingItems.forEach((item) => {item.close();});
   }
+
+  private presentPopover(myEvent){
+    let popover = this.popoverCtrl.create(WaypointsListPopover, {callback: () => {this.refreshList()}});
+    popover.present({
+      ev: myEvent,
+    });
+  }
+}
+
+@Component({
+  template: `
+    <ion-list>
+      <button ion-item (click)="export()">Export all to SD</button>
+      <button ion-item (click)="import()">Import all from SD</button>
+    </ion-list>
+  `,
+  providers: [WaypointsService]
+})
+export class WaypointsListPopover {
+  constructor(public viewCtrl: ViewController,
+    private alertCtrl: AlertController,
+    private translateService: TranslateService,
+    private service: WaypointsService,
+    private navParams: NavParams) {
+
+  }
+
+  async export() {
+    let alert = this.alertCtrl.create({
+      title: this.translateService.instant(_('waypoints-export-title')),
+      buttons: [],
+      enableBackdropDismiss: false
+    });
+    alert.addButton({
+      text: this.translateService.instant(_('waypoints-export-confirm')),
+      handler: () => {
+        this.service.export(this.navParams.get('callback'));
+      }
+    });
+    alert.addButton({
+      text: this.translateService.instant(_('waypoints-export-dismiss')),
+    });
+    alert.present();
+
+    this.viewCtrl.dismiss();
+  }
+
+  async import() {
+    let alert = this.alertCtrl.create({
+      title: this.translateService.instant(_('waypoints-import-title')),
+      buttons: [],
+      enableBackdropDismiss: false
+    });
+    alert.addButton({
+      text: this.translateService.instant(_('waypoints-import-confirm')),
+      handler: () => {
+        this.service.import(this.navParams.get('callback'));
+      }
+    });
+    alert.addButton({
+      text: this.translateService.instant(_('waypoints-import-dismiss')),
+    });
+    alert.present();
+
+    this.viewCtrl.dismiss();
+  }
 }

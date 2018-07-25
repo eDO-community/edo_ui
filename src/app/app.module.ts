@@ -46,7 +46,7 @@ import { HomePage } from '../pages/home/home';
 import { ConfigurationPage } from '../pages/configuration/configuration';
 import { ConfigurationBoardPage } from '../pages/configuration-board/configuration-board';
 import { CalibrationPage } from '../pages/calibration/calibration';
-import { WaypointsListPage } from '../pages/waypoints-list/waypoints-list';
+import { WaypointsListPage, WaypointsListPopover } from '../pages/waypoints-list/waypoints-list';
 import { WaypointsDetailPage } from '../pages/waypoints-detail/waypoints-detail';
 import { WaypointsEditorPage } from '../pages/waypoints-editor/waypoints-editor';
 import { SettingsPage } from '../pages/settings/settings';
@@ -62,6 +62,7 @@ import { EDOUnlockModalComponent } from '../components/edo-unlock-modal/edo-unlo
 import { PluginService } from '../services';
 import { SettingsPluginsPage } from '../pages/settings-plugins/settings-plugins';
 import { SettingsToolsListPage } from '../pages/settings-tools-list/settings-tools-list';
+import { File } from '@ionic-native/file';
 
 export function createTranslateLoader(http: Http) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -79,6 +80,7 @@ export function createTranslateLoader(http: Http) {
     ConfigurationBoardPage,
     CalibrationPage,
     WaypointsListPage,
+    WaypointsListPopover,
     WaypointsDetailPage,
     WaypointsEditorPage,
     SettingsToolsListPage,
@@ -113,6 +115,7 @@ export function createTranslateLoader(http: Http) {
     ConfigurationBoardPage,
     CalibrationPage,
     WaypointsListPage,
+    WaypointsListPopover,
     WaypointsDetailPage,
     WaypointsEditorPage,
     SettingsToolsListPage,
@@ -127,7 +130,8 @@ export function createTranslateLoader(http: Http) {
     SplashScreen,
     { provide: ErrorHandler, useClass: IonicErrorHandler },
     PluginService,
-    Globalization
+    Globalization,
+    File
   ]
 })
 export class AppModule { }

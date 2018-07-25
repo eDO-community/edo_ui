@@ -28,6 +28,7 @@
  * either expressed or implied, of the FreeBSD Project.
  */
 
+import { File } from '@ionic-native/file';
 import { Injectable } from "@angular/core";
 import { Storage } from '@ionic/storage';
 import { SettingsKeys } from '../utils';
@@ -127,7 +128,7 @@ export class WaypointPath {
  */
 @Injectable()
 export class WaypointsService {
-  constructor(public storage: Storage) {
+  constructor(public storage: Storage, private file: File) {
 
   }
 
@@ -197,5 +198,28 @@ export class WaypointsService {
     ids.splice(to, 0, element);
 
     return await this.storage.set(SettingsKeys.WAYPOINTS, ids);
+  }
+
+  async export(callback){
+    try{
+      let data:WaypointPath[] = await this.load();
+      await this.file.writeFile(this.file.externalRootDirectory, 'eDOWaypoins.json', JSON.stringify(data), {replace: true})
+      callback();
+    }catch(err){
+      console.error(err);
+    }
+  }
+
+  async import(callback){
+    try{
+      let dataString:string = await this.file.readAsText(this.file.externalRootDirectory, 'eDOWaypoins.json');
+      let waypointPaths:WaypointPath[] = JSON.parse(dataString);
+      for (var waypointPath of waypointPaths) {
+        await this.save(waypointPath);
+      };
+      callback();
+    }catch(err){
+      console.error(err);
+    }
   }
 }
