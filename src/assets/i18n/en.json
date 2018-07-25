@@ -61,7 +61,7 @@
 	"logout-goto-joystick": "Go to joystick",
 	"logout-message": "Do you want to disconnect from e.DO ?",
 	"logout-message-not-in-calibration": "Do you want to disconnect from e.DO in current position or do you want to move e.DO to its home position ?",
-	"logout-title": "Logout title",
+	"logout-title": "Disconnect",
 	"machine-error": "Machine error",
 	"machine-error-message": "Unexpected error. Shutdown and restart e.DO to continue.",
 	"menu-title": "Menu",
