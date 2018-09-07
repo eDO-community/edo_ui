@@ -29,17 +29,13 @@
  */
 
 import { Component } from '@angular/core';
-import { NavController, NavParams, ToastController, AlertController, MenuController } from 'ionic-angular';
-import { StatusBar } from '@ionic-native/status-bar';
+import { ToastController, AlertController, MenuController, Platform } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
-import { HomePage } from '../home/home';
-import { CalibrationPage } from '../calibration/calibration';
 import { RosService, CurrentState } from '../../services';
 import { SettingsKeys, DEFAULT_IP, DEFAULT_PORT, AVAILABLE_LANGUAGES, getPreferredLanguage, _ } from '../../utils';
 import { Subscription } from 'rxjs/Subscription';
 import { TranslateService } from '@ngx-translate/core';
 import { Globalization } from '@ionic-native/globalization';
-import { ConfigurationPage } from '../configuration/configuration';
 import { AppVersion } from '@ionic-native/app-version';
 
 declare var cordova: any | undefined;
@@ -63,8 +59,8 @@ export class LoginPage {
 
   private appVersion:string;
 
-  constructor(private navCtrl: NavController, private navParams: NavParams,
-    private statusBar: StatusBar, private toastCtrl:ToastController,
+  constructor(public platform: Platform,
+    private toastCtrl:ToastController,
     private storage: Storage, private rosService: RosService,
     public translateService: TranslateService, private alertCtrl: AlertController,
     private globalization: Globalization,
@@ -99,10 +95,12 @@ export class LoginPage {
       this.ready = true;
     });
 
-    this.app.getVersionNumber().then(version => {
-      this.appVersion = version;
-    }).catch(error => {
-      this.appVersion = "N/A";
+    this.platform.ready().then(() => {
+      this.app.getVersionNumber().then(version => {
+        this.appVersion = version;
+      }).catch(error => {
+        this.appVersion = "N/A";
+      });
     });
   }
 
